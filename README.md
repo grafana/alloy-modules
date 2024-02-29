@@ -4,9 +4,9 @@
 
 ## Stability promise
 
-The default branch is `unstable` and is considered to never be used or any promise of backwards compatibilty. Instead any tags or commits will be unchanging.
+The default branch is `unstable` and is considered to never be used or any promise of backwards compatibility. Instead any tags or commits will be unchanging.
 
-NOTE: **This is only to be used for Modules not Modules Classis.**
+**NOTE: This is only to be used for Modules not Modules Classis.**
 
 [Modules](https://grafana.com/docs/agent/latest/flow/concepts/modules/) are a
 way to create Grafana Agent [Flow](https://grafana.com/docs/agent/latest/flow/)
