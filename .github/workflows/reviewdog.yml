@@ -169,7 +169,7 @@
                 rm -rf "$TMP_PATH/$ARCHIVE-$HOST_OS-$HOST_ARCH"
 
             echo ""
-            grafana-agent --help
+            AGENT_MODE="flow" && grafana-agent --help
         - run: |
             ./tools/lint-river.sh --format=checkstyle
         - env:
