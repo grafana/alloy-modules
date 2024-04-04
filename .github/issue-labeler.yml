@@ -1,79 +1,59 @@
 ---
 # Use the following command to test globs locally:
 
-# Add 'agent' label to any changes within 'guides' that references 'agent'
-agent:
-  - '(agent|alloy|collector)'
+brokers:
+  - '(broker|brokers|kafka|rabbitmq|nats|nats-streaming)'
 
-# Add 'alerting' label to any changes within 'guides' that references 'alert'
-alerting:
-  - '(alert|alerting|notification|rule|silence|receiver|route|route)'
+cloud:
+  - '(cloud|aws|azure|gcp|google|alibaba|tencent|oracle|digitalocean|linode|vultr|upcloud|scaleway|hetzner|ovh|cloudflare)'
 
-# Add 'alertmanager' label to any changes within 'guides' that references 'alert'
-alertmanager:
-  - '(alertmanager|am|amtool)'
+aws:
+  - '(aws|amazon|ec2|s3|lambda|cloudfront|route53|eks|ecr|ecs|fargate|cloudwatch|cloudtrail|cloudformation|cfn|cognito|iam|sts|sqs|sns|sqs)'
 
-# Add 'dashboard' label to any changes within 'guides' that references 'dashboard'
-dashboard:
-  - '(dashboard|dash|graph|panel|row|stat|table|singlestat|gauge|graph|heatmap|timeseries)'
+azure:
+  - '(azure|azurerm|aks|acr|app-service|cosmosdb|keyvault|vm|virtual-machine|vnet|virtual-network|storage|blob|table|queue|file|cdn|frontdoor)'
 
-# Add 'grafana' label to any changes within 'guides' that references 'grafana'
+gcp:
+  - '(gcp|google|gke|gce|gcs|cloud-storage|cloud-functions|cloud-run|cloud-sql|cloud-spanner|cloud-pubsub|cloud-iot|cloud-tpu|cloud-ml|cloud-ai)'
+
 grafana:
-  - '(grafana|datasource)'
+  - '(grafana|grafana-labs|grafana-cloud|grafana-enterprise|grafana-agent|grafana-loki|raintank|metrictank)'
 
-# Add 'helm' label to any changes within 'guides' that references 'helm'
-helm:
-  - ('helm|chart|values')
-
-# Add 'incident' label to any changes within 'guides' that references 'helm'
-incident:
-  - '(incident)'
-
-# Add 'k6' label to any changes within 'guides' that references 'k6'
-k6:
-  - '(k6|loadtest)'
-
-# Add 'kubernetes' label to any changes within 'guides' that references 'kube' or 'k8s'
 kubernetes:
-  - '(kube|k8s|kubernetes|cdadvisor|cadvisor|kubeadm|kubectl|kubeproxy|kube-proxy|kube-scheduler|kube-scheduler|kube-controller|kube-controller|kube-apiserver|kube-apiserver|kubelet)'
+  - '(kube|k8s|kubernetes|cadvisor|kubeadm|kubectl|kube-?proxy|kube-scheduler|kube-controller|kube-?apiserver|kubelet)'
 
-# Add 'loki' label to any changes within 'guides' that references 'loki' or 'gel' or 'log'
 loki:
-  - '(loki|gel|log|logql|enterprise(-| )log)'
+  - '(loki|gel|log|logql|enterprise(-| )log|promtail)'
 
-# Add 'mimir' label to any changes within 'guides' that references 'mimir' or 'gem' or 'metrics'
-#  or 'prometheus' or 'promql'
 mimir:
-  - '(mimir|gem|metrics|prometheus|promql|enterprise(-| )metric)'
+  - '(mimir|gem|prometheus|promql|enterprise(-| )?metric)'
 
-# Add 'oncall' label to any changes within 'guides' that references 'oncall'
-oncall:
-  - '(oncall|on-call)'
+ci-cd:
+  - '(lint|tag|release|deploy|ci|cd|pipeline|workflow|github-actions)'
 
-# Add 'openshift' label to any changes within 'guides' that references 'openshift'
 openshift:
   - '(openshift|oc|oadm|oadmin|ocp|okd|openshift-origin)'
 
-# Add 'otel' label to any changes within 'guides' that references 'otel' or 'instrument' or 'telemetry' or 'tracing'
 otel:
   - '(otel|instrument|telemetry|trace|tracing|opentelemetry|jaeger|zipkin)'
 
-# Add 'plugin' label to any changes within 'guides' that references 'openshift'
-plugin:
-  - '(plugin|extension|integration)'
+system:
+  - '(system|linux|unix|macos|windows|freebsd|openbsd|netbsd|dragonfly|solaris|aix|esxi|vmware||ubuntu|debian|centos|rhel|fedora|suse|raspbian|raspberry)'
 
-# Add 'pyroscope' label to any changes within 'guides' that references 'pyroscope' or 'profil'
 pyroscope:
-  - '(pyroscope|profile|profiling|cpu|memory|heap|goroutine|goroutines|flamegraph|flame)'
+  - '(pyroscope|profile|profiling|heap|goroutine|goroutines|flamegraph|flame)'
 
-# Add 'tempo' label to any changes within 'guides' that references 'tempo' or 'trac'
 tempo:
   - '(tempo|trace|tracing|jaeger|zipkin|opentelemetry)'
 
-# Add 'terraform' label to any changes within 'guides' that references 'terraform' or 'tf'
-terraform:
-  - '(terraform|tf|provider)'
-
-# Add 'windows' label to any changes within 'guides' that references 'windows'
 windows:
   - '(windows|win|wmi|perfmon|eventlog|event-log|eventviewer|event-viewer)'
+
+utils:
+  - '(utils)'
+
+logs:
+  - '(logs)'
+
+metrics:
+  - '(metrics)'

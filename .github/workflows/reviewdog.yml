@@ -43,25 +43,6 @@
           run: |
             echo "$GITHUB_CONTEXT" | jq -r '.'
 
-    languagetool:
-      name: runner / languagetool
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - uses: reviewdog/action-languagetool@v1
-          with:
-            github_token: ${{ secrets.github_token }}
-            reporter: github-check
-            level: info
-            patterns: |
-              **/*.md
-              !**/testdata/**
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
-
     alex:
       name: runner / alex
       runs-on: ubuntu-latest
@@ -164,9 +145,31 @@
         - uses: actions/checkout@v4
         - uses: reviewdog/action-setup@v1
         - run: |
-            sudo mkdir -p /etc/apt/keyrings/
-            wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
-            echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+            GITHUB_ORG="grafana" && \
+            GITHUB_REPO="agent" && \
+            ARCHIVE="grafana-agent" && \
+            BINARY="grafana-agent" && \
+            BIN_PATH="/usr/local/bin" && \
+            TMP_PATH="/tmp" && \
+            AGENT_VERSION=$(wget -q -O - "https://api.github.com/repos/$GITHUB_ORG/$GITHUB_REPO/releases/latest" \
+                | grep -m 1 tag_name \
+                | cut -d '"' -f 4 | cut -c2-) && \
+            HOST_OS=$(uname -a | awk '{print tolower($1)}') && \
+            HOST_ARCH=$(arch) && \
+            DOWNLOAD_URL="https://github.com/$GITHUB_ORG/$GITHUB_REPO/releases/download" && \
+            DOWNLOAD_URL="$DOWNLOAD_URL/v$AGENT_VERSION/$ARCHIVE-$HOST_OS-$HOST_ARCH.zip"
+                echo "Downloading $DOWNLOAD_URL to $TMP_PATH/$ARCHIVE.zip" && \
+                wget -O "$TMP_PATH/$ARCHIVE.zip" "$DOWNLOAD_URL" && \
+                echo "Unzipping: $TMP_PATH/$ARCHIVE.zip" && \
+                ( cd "$TMP_PATH" || exit ; unzip -qq -o -d "$TMP_PATH" "$TMP_PATH/$BINARY.zip" ) && \
+                rm -rf "$TMP_PATH/$ARCHIVE.zip" && \
+                chmod a+x "$TMP_PATH/$BINARY-$HOST_OS-$HOST_ARCH" &&
+                echo "Moving: $TMP_PATH/$ARCHIVE-$HOST_OS-$HOST_ARCH/$BINARY to $BIN_PATH/$BINARY" && \
+                sudo mv "$TMP_PATH/$BINARY-$HOST_OS-$HOST_ARCH" "$BIN_PATH/$BINARY" && \
+                rm -rf "$TMP_PATH/$ARCHIVE-$HOST_OS-$HOST_ARCH"
+
+            echo ""
+            grafana-agent --help
         - env:
             REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
