@@ -4,9 +4,6 @@ source "$(pwd)/tools/includes/utils.sh"
 
 source "./tools/includes/logging.sh"
 
-# output the heading
-heading "Agent" "Modules - Performing River Lint"
-
 # check to see if grafana-agent is installed
 if [[ "$(command -v grafana-agent)" = "" ]]; then
   emergency "grafana-agent is required if running lint locally, see: (https://grafana.com/docs/agent/latest/) or run: brew install grafana-agent";
@@ -27,6 +24,11 @@ do
     break
   fi
 done
+
+if [[ "$format" == "console" ]]; then
+  # output the heading
+  heading "Agent" "Modules - Performing River Lint"
+fi
 
 statusCode=0
 checkstyle='<?xml version="1.0" encoding="utf-8"?><checkstyle version="4.3">'
