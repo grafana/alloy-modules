@@ -1,0 +1,122 @@
+---
+# Use the following command to test globs locally:
+# compgen -G '<glob-pattern>'
+
+# Add 'agent' label to any changes within 'guides' that references 'agent'
+agent:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**agent**'
+
+# Add 'alerting' label to any changes within 'guides' that references 'alert'
+alerting:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**alert**'
+
+# Add 'alertmanager' label to any changes within 'guides' that references 'alert'
+alertmanager:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**alertmanager**'
+
+# Add 'ci / cd' label to any changes within 'guides' that references 'ci' or 'cd
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file: '.*'    # dotfiles
+      - any-glob-to-any-file: 'Makefile'
+      - any-glob-to-any-file: 'package.json'
+      - any-glob-to-any-file: 'Pipefile'
+      - any-glob-to-any-file: 'tools/**/*'
+      - any-glob-to-any-file: 'assets/**/*'
+
+# Add 'dashboard' label to any changes within 'guides' that references 'dashboard'
+dashboard:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**dashboard**'
+
+# Add 'grafana' label to any changes within 'guides' that references 'grafana'
+grafana:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**grafana**'
+
+# Add 'helm' label to any changes within 'guides' that references 'helm'
+helm:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**helm**'
+
+# Add 'incident' label to any changes within 'guides' that references 'helm'
+incident:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**incident**'
+
+# Add 'k6' label to any changes within 'guides' that references 'k6'
+k6:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**k6**'
+
+# Add 'kubernetes' label to any changes within 'guides' that references 'kube' or 'k8s'
+kubernetes:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**kube**'
+      - any-glob-to-any-file: 'guides/**/**k8s**'
+
+# Add 'loki' label to any changes within 'guides' that references 'loki' or 'gel' or 'log'
+loki:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**loki**'
+      - any-glob-to-any-file: 'guides/**/**gel**'
+      - any-glob-to-any-file: 'guides/**/**log**'
+
+# Add 'mimir' label to any changes within 'guides' that references 'mimir' or 'gem' or 'metrics'
+#  or 'prometheus' or 'promql'
+mimir:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**mimir**'
+      - any-glob-to-any-file: 'guides/**/**gem**'
+      - any-glob-to-any-file: 'guides/**/**metrics**'
+      - any-glob-to-any-file: 'guides/**/**prometheus**'
+      - any-glob-to-any-file: 'guides/**/**promql**'
+
+# Add 'oncall' label to any changes within 'guides' that references 'oncall'
+oncall:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**oncall**'
+
+# Add 'openshift' label to any changes within 'guides' that references 'openshift'
+openshift:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**openshift**'
+
+# Add 'otel' label to any changes within 'guides' that references 'otel' or 'instrument' or 'telemetry' or 'tracing'
+otel:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**otel**'
+      - any-glob-to-any-file: 'guides/**/**instrument**'
+      - any-glob-to-any-file: 'guides/**/**telemetry**'
+      - any-glob-to-any-file: 'guides/**/**tracing**'
+
+# Add 'plugin' label to any changes within 'guides' that references 'openshift'
+plugin:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**plugin**'
+
+# Add 'pyroscope' label to any changes within 'guides' that references 'pyroscope' or 'profil'
+pyroscope:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**pyroscope**'
+      - any-glob-to-any-file: 'guides/**/**profil**'
+
+# Add 'tempo' label to any changes within 'guides' that references 'tempo' or 'trac'
+tempo:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**tempo**'
+      - any-glob-to-any-file: 'guides/**/**trac**'
+
+# Add 'terraform' label to any changes within 'guides' that references 'terraform' or 'tf'
+terraform:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**terraform**'
+      - any-glob-to-any-file: 'guides/**/**tf**'
+
+# Add 'windows' label to any changes within 'guides' that references 'windows'
+windows:
+  - changed-files:
+      - any-glob-to-any-file: 'guides/**/**windows**'

@@ -1,0 +1,26 @@
+{
+  "name": "flow-modules",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grafana/flow-modules.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/grafana/flow-modulesissues"
+  },
+  "homepage": "https://github.com/grafana/flow-modules#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "alex": "^11.0.1",
+    "editorconfig-checker": "^5.1.4",
+    "markdownlint-cli2": "^0.12.1",
+    "textlint": "^14.0.3",
+    "textlint-rule-common-misspellings": "^1.0.1",
+    "textlint-rule-no-todo": "^2.0.1",
+    "textlint-rule-terminology": "^4.0.1"
+  }
+}
