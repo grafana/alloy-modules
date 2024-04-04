@@ -16,11 +16,6 @@
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             reporter: github-check
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     misspell:
       name: runner / misspell
@@ -37,11 +32,6 @@
               ./modules
             pattern: |
               *.md
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     alex:
       name: runner / alex
@@ -54,11 +44,6 @@
             reporter: github-check
             # GitHub Status Check won't become failure with warning.
             level: warning
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     shellcheck:
       name: runner / shellcheck
@@ -69,11 +54,6 @@
           with:
             github_token: ${{ secrets.github_token }}
             reporter: github-check
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     gitleaks:
       name: runner / gitleaks
@@ -84,11 +64,6 @@
           with:
             github_token: ${{ secrets.github_token }}
             reporter: github-check
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     actionlint:
       name: runner / actionlint
@@ -99,11 +74,6 @@
           with:
             github_token: ${{ secrets.github_token }}
             reporter: github-check
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     eclint:
       name: runner / eclint
@@ -114,11 +84,6 @@
           with:
             github_token: ${{ secrets.github_token }}
             reporter: github-check
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
 
     textlint:
       name: runner / textlint
@@ -169,4 +134,4 @@
             REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
             ./tools/lint-river.sh --format=checkstyle | \
-              reviewdog -f=checkstyle -name="grafana-agent" -reporter=github-check
+              reviewdog -f=checkstyle -name="grafana-agent" -reporter=github-pr-check
