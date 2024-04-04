@@ -39,7 +39,7 @@ declare "push_gateway" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 

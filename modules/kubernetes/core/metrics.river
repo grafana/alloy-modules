@@ -30,12 +30,12 @@ declare "cadvisor" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -254,12 +254,12 @@ declare "resources" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -406,12 +406,12 @@ declare "kubelet" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -569,7 +569,7 @@ declare "apiserver" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
@@ -754,12 +754,12 @@ declare "kube_state_metrics" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -875,12 +875,12 @@ declare "probes" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -1038,12 +1038,12 @@ declare "kube_dns" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 

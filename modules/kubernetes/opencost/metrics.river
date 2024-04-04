@@ -85,12 +85,12 @@ declare "scrape" {
   }
 
   argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
+    comment = "A regular expression of metrics to keep (default: see below)"
     optional = true
   }
 
   argument "drop_metrics" {
-    comment = "A regex of metrics to drop (default: see below)"
+    comment = "A regular expression of metrics to drop (default: see below)"
     optional = true
   }
 

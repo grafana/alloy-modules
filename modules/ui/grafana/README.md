@@ -1,6 +1,6 @@
 # Grafana Module
 
-Handles scraping Grafana metrics.
+Handles scraping grafana metrics.
 
 ## Components
 
@@ -76,8 +76,8 @@ The following labels are automatically added to exported targets.
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`         | Must be a where scraped should be forwarded to                                                                                                      |
 | `job_label`       | _no_     | `integrations/grafana`          | The job label to add for all mimir metric                                                                                                           |
 | `port_name`       | _no_     | `http-metrics`                  | The of the port to scrape metrics from                                                                                                              |
-| `keep_metrics`    | _no_     | [see code](module.river#L228)   | A regex of metrics to keep                                                                                                                          |
-| `drop_metrics`    | _no_     | [see code](module.river#L235)   | A regex of metrics to drop                                                                                                                          |
+| `keep_metrics`    | _no_     | [see code](module.river#L228)   | A regular expression of metrics to keep                                                                                                             |
+| `drop_metrics`    | _no_     | [see code](module.river#L235)   | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                           | How often to scrape metrics from the targets                                                                                                        |
 | `scrape_timeout`  | _no_     | `10s`                           | How long before a scrape times out                                                                                                                  |
 | `max_cache_size`  | _no_     | `100000`                        | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -97,7 +97,7 @@ The following labels are automatically added to exported targets.
 
 ### Kubernetes
 
-The following example will scrape all grafana instances in cluster.
+The following example will scrape all Grafana instances in cluster.
 
 ```river
 import.git "grafana" {
