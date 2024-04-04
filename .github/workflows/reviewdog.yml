@@ -155,7 +155,7 @@
                 | grep -m 1 tag_name \
                 | cut -d '"' -f 4 | cut -c2-) && \
             HOST_OS=$(uname -a | awk '{print tolower($1)}') && \
-            HOST_ARCH=$(arch) && \
+            HOST_ARCH=$(arch | sed 's/x86_64/amd64/') && \
             DOWNLOAD_URL="https://github.com/$GITHUB_ORG/$GITHUB_REPO/releases/download" && \
             DOWNLOAD_URL="$DOWNLOAD_URL/v$AGENT_VERSION/$ARCHIVE-$HOST_OS-$HOST_ARCH.zip"
                 echo "Downloading $DOWNLOAD_URL to $TMP_PATH/$ARCHIVE.zip" && \
