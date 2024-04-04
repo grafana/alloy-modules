@@ -55,14 +55,14 @@ while read -r file; do
       # Process each line here
       line=$(echo "${row}" | awk -F ':' '{print $2}')
       column=$(echo "${row}" | awk -F ':' '{print $3}')
-      error=$(echo "${row}" | cut -d':' -f4- | sed 's/"/\\"/g')
+      error=$(echo "${row}" | cut -d':' -f4- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sed -e 's/"/\&quot;/g')
       checkstyle="${checkstyle}<error line=\"${line}\" column=\"${column}\" severity=\"error\" message=\"${error}\" source=\"grafana-agent\"/>"
       # output to console only if the format is console
       if [[ "${format}" == "console" ]]; then
         echo "  - ${row}"
       fi
     done <<< "${message}"
-    checkstyle="${checkstyle}</file>"
+    checkstyle="${checkstyle}\n  </file>"
   fi
   # only override the statusCode if it is 0
   if [[ "${statusCode}" == 0 ]]; then
