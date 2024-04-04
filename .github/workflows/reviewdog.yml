@@ -34,7 +34,7 @@
             reporter: github-check
             level: warning
             path: |
-              ./guides
+              ./modules
             pattern: |
               *.md
         - name: Github Context
@@ -130,7 +130,7 @@
         - env:
             REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
-            npx textlint --format checkstyle --config "$(pwd)/.textlintrc" guides/**/*.md | \
+            npx textlint --format checkstyle --config "$(pwd)/.textlintrc" modules/**/*.md | \
               reviewdog -f=checkstyle -name="textlint" -reporter=github-check -level=info
         - name: Github Context
           env:

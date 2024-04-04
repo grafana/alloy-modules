@@ -74,7 +74,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/mimir`          | The job label to add for all mimir metric                                                                                                           |
+| `job_label`       | _no_     | `integrations/mimir`          | The job label to add for all metrics                                                                                                           |
 | `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
@@ -97,7 +97,7 @@ The following labels are automatically added to exported targets.
 
 ### Kubernetes
 
-The following example will scrape all mimir instances in cluster.
+The following example will scrape all Mimir instances in cluster.
 
 ```river
 import.git "mimir" {
@@ -133,7 +133,7 @@ prometheus.remote_write "local_primary" {
 
 ### Local
 
-The following example will scrape mimir for metrics on the local machine.
+The following example will scrape Mimir for metrics on the local machine.
 
 ```river
 import.git "mimir" {

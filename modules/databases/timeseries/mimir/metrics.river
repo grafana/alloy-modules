@@ -169,7 +169,7 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all mimir metric (default: integrations/mimir)"
+    comment = "The job label to add for all metrics (default: integrations/mimir)"
     optional = true
   }
 

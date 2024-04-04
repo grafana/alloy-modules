@@ -17,7 +17,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | Name         | Required | Default                                | Description                                                                                                                                            |
 | :----------- | :------- | :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                            |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=loki"]`      | The label selectors to use to find matching targets<br>*Note:* for Grafana Enterprise Logs this should be `["app.kubernetes.io/name=enterprise-logs"]` |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=loki"]`      | The label selectors to use to find matching targets<br> **Note:** for Grafana Enterprise Logs this should be `["app.kubernetes.io/name=enterprise-logs"]` |
 | `port_name`  | _no_     | `http-metrics`                         | The of the port to scrape metrics from                                                                                                                 |
 
 #### Exports
@@ -73,7 +73,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/loki`           | The job label to add for all mimir metric                                                                                                           |
+| `job_label`       | _no_     | `integrations/loki`           | The job label to add for all metrics                                                                                                           |
 | `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
@@ -97,7 +97,7 @@ The following labels are automatically added to exported targets.
 
 ### Kubernetes
 
-The following example will scrape all loki instances in cluster.
+The following example will scrape all Loki instances in cluster.
 
 ```river
 import.git "loki" {
@@ -133,7 +133,7 @@ prometheus.remote_write "local_primary" {
 
 ### Local
 
-The following example will scrape loki for metrics on the local machine.
+The following example will scrape Loki for metrics on the local machine.
 
 ```river
 import.git "loki" {

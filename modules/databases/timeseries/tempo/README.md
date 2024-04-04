@@ -74,7 +74,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/tempo`          | The job label to add for all tempo metric                                                                                                           |
+| `job_label`       | _no_     | `integrations/tempo`          | The job label to add for all metrics                                                                                                         |
 | `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
@@ -97,7 +97,7 @@ The following labels are automatically added to exported targets.
 
 ### Kubernetes
 
-The following example will scrape all tempo instances in cluster.
+The following example will scrape all Tempo instances in cluster.
 
 ```river
 import.git "tempo" {
@@ -133,7 +133,7 @@ prometheus.remote_write "local_primary" {
 
 ### Local
 
-The following example will scrape tempo for metrics on the local machine.
+The following example will scrape Tempo for metrics on the local machine.
 
 ```river
 import.git "tempo" {
