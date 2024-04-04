@@ -55,14 +55,14 @@ while read -r file; do
       # Process each line here
       line=$(echo "${row}" | awk -F ':' '{print $2}')
       column=$(echo "${row}" | awk -F ':' '{print $3}')
-      error=$(echo "${row}" | cut -d':' -f4- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sed -e 's/"/\&quot;/g')
+      error=$(echo "${row}" | cut -d':' -f4- | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sed -e 's/"/\&quot;/g' | xargs)
       checkstyle="${checkstyle}<error line=\"${line}\" column=\"${column}\" severity=\"error\" message=\"${error}\" source=\"grafana-agent\"/>"
       # output to console only if the format is console
       if [[ "${format}" == "console" ]]; then
         echo "  - ${row}"
       fi
     done <<< "${message}"
-    checkstyle="${checkstyle}\n  </file>"
+    checkstyle="${checkstyle}</file>"
   fi
   # only override the statusCode if it is 0
   if [[ "${statusCode}" == 0 ]]; then
@@ -73,7 +73,7 @@ done < <(find . -type f -name "*.river" -not -path "./node_modules/*" -not -path
 checkstyle="${checkstyle}</checkstyle>"
 
 if [[ "${format}" == "checkstyle" ]]; then
-  echo "${checkstyle}" | sed 's/\x1B//g' || true
+  echo "${checkstyle}" | sed 's/&#x1A;//g' || true
 fi
 
 echo ""
