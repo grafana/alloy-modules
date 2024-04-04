@@ -73,7 +73,7 @@ done < <(find . -type f -name "*.river" -not -path "./node_modules/*" -not -path
 checkstyle="${checkstyle}</checkstyle>"
 
 if [[ "${format}" == "checkstyle" ]]; then
-  echo "${checkstyle}" | sed 's/&#x1A;//g' || true
+  echo -n "${checkstyle}"
 fi
 
 echo ""
