@@ -76,10 +76,10 @@ checkstyle="${checkstyle}</checkstyle>"
 
 if [[ "${format}" == "checkstyle" ]]; then
   echo -n "${checkstyle}"
+else
+  echo ""
+  echo ""
 fi
-
-echo ""
-echo ""
 
 # if the script was called by another, send a valid exit code
 if [[ "$sourced" == "1" ]]; then

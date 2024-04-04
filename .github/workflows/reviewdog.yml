@@ -174,4 +174,4 @@
             REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
             ./tools/lint-river.sh --format=checkstyle | \
-              reviewdog -f=checkstyle -name="grafana-agent" -reporter=github-check -level=error
+              reviewdog -f=checkstyle -name="grafana-agent" -reporter=github-check -level=error -fail-on-error
