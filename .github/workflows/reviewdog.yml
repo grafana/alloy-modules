@@ -170,13 +170,10 @@
 
             echo ""
             grafana-agent --help
+        - run: |
+            ./tools/lint-river.sh --format=checkstyle
         - env:
             REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
             ./tools/lint-river.sh --format=checkstyle | \
               reviewdog -f=checkstyle -name="grafana-agent" -reporter=github-check -level=error
-        - name: Github Context
-          env:
-            GITHUB_CONTEXT: ${{ toJson(github) }}
-          run: |
-            echo "$GITHUB_CONTEXT" | jq -r '.'
