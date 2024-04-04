@@ -34,7 +34,7 @@ checkstyle='<?xml version="1.0" encoding="utf-8"?><checkstyle version="4.3">'
 while read -r file; do
   # add file to checkstyle output
   checkstyle="${checkstyle}<file name=\"${file}\">"
-  message=$(AGENT_MODE="flow" grafana-agent fmt "${file}" 2>&1)
+  message=$(AGENT_MODE="flow" grafana-agent fmt "${file}" 2>&1 || true)
   currentCode="$?"
   message=$(echo "${message}" | grep -v "Error: encountered errors during formatting")
 

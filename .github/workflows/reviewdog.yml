@@ -159,7 +159,7 @@
             DOWNLOAD_URL="https://github.com/$GITHUB_ORG/$GITHUB_REPO/releases/download" && \
             DOWNLOAD_URL="$DOWNLOAD_URL/v$AGENT_VERSION/$ARCHIVE-$HOST_OS-$HOST_ARCH.zip"
                 echo "Downloading $DOWNLOAD_URL to $TMP_PATH/$ARCHIVE.zip" && \
-                wget -O "$TMP_PATH/$ARCHIVE.zip" "$DOWNLOAD_URL" && \
+                wget -q -O "$TMP_PATH/$ARCHIVE.zip" "$DOWNLOAD_URL" && \
                 echo "Unzipping: $TMP_PATH/$ARCHIVE.zip" && \
                 ( cd "$TMP_PATH" || exit ; unzip -qq -o -d "$TMP_PATH" "$TMP_PATH/$BINARY.zip" ) && \
                 rm -rf "$TMP_PATH/$ARCHIVE.zip" && \
