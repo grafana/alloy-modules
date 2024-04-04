@@ -34,7 +34,7 @@ checkstyle='<?xml version="1.0" encoding="utf-8"?><checkstyle version="4.3">'
 while read -r file; do
   # add file to checkstyle output
   checkstyle="${checkstyle}<file name=\"${file}\">"
-  message=$(AGENT_MODE="flow" grafana-agent fmt "${file}" 2>&1 || true)
+  message=$(AGENT_MODE="flow" grafana-agent fmt "${file}" 2>&1)
   currentCode="$?"
   message=$(echo "${message}" | grep -v "Error: encountered errors during formatting")
 
@@ -73,7 +73,7 @@ done < <(find . -type f -name "*.river" -not -path "./node_modules/*" -not -path
 checkstyle="${checkstyle}</checkstyle>"
 
 if [[ "${format}" == "checkstyle" ]]; then
-  echo "${checkstyle}"
+  echo "${checkstyle}" | sed 's/\x1B//g' || true
 fi
 
 echo ""
