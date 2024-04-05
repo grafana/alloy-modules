@@ -89,7 +89,6 @@ The following labels are automatically added to exported targets.
 | :---- | :------------------------------------------------------------------------------- |
 | `job` | For kubernetes scrapes, this label is set to `{{namespace}}/{{controller_name}}` |
 
-
 ---
 
 ## Usage
