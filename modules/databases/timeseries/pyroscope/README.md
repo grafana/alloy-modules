@@ -17,13 +17,13 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | Name         | Required | Default                                | Description                                                                 |
 | :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=pyroscope"]`      | The label selectors to use to find matching targets                        |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=pyroscope"]` | The label selectors to use to find matching targets                         |
 | `port_name`  | _no_     | `http-metrics`                         | The of the port to scrape metrics from                                      |
 
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
@@ -53,7 +53,7 @@ The following labels are automatically added to exported targets.
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
@@ -74,7 +74,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/pyroscope`          | The job label to add for all pyroscope metric                                                                                                           |
+| `job_label`       | _no_     | `integrations/pyroscope`      | The job label to add for all pyroscope metric                                                                                                       |
 | `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |

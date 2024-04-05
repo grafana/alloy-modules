@@ -14,16 +14,16 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                                    | Description |
-| :----------- | :------- | :----------------------------------------- | :---------- |
+| Name         | Required | Default                                    | Description                                                                 |
+| :----------- | :------- | :----------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                       | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=grafana-agent"]` | The label selectors to use to find matching targets |
-| `port_name`  | _no_     | `http-metrics`                             | The of the port to scrape metrics from |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=grafana-agent"]` | The label selectors to use to find matching targets                         |
+| `port_name`  | _no_     | `http-metrics`                             | The of the port to scrape metrics from                                      |
 
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
@@ -39,6 +39,7 @@ The following labels are automatically added to exported targets.
 | `pod`       | The full name of the pod                                                                                                                            |
 | `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                   |
 | `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `ReplicaSet/my-app` |
+
 ---
 
 ### local
@@ -73,7 +74,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/agent`          | The job label to add for all metrics                                                                                                           |
+| `job_label`       | _no_     | `integrations/agent`          | The job label to add for all metrics                                                                                                                |
 | `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |

@@ -23,7 +23,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
@@ -53,7 +53,7 @@ The following labels are automatically added to exported targets.
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels

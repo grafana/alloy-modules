@@ -18,6 +18,7 @@ declare "kubernetes" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
     comment = "The label selectors to use to find matching targets (default: [])"
     optional = true
+  }
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/

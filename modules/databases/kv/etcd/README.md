@@ -23,7 +23,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
@@ -52,7 +52,7 @@ The following labels are automatically added to exported targets.
 #### Exports
 
 | Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
@@ -73,7 +73,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/etcd`           | The job label to add for all metrics                                                                                                           |
+| `job_label`       | _no_     | `integrations/etcd`           | The job label to add for all metrics                                                                                                                |
 | `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
@@ -86,8 +86,8 @@ The following labels are automatically added to exported targets.
 
 The following labels are automatically added to exported targets.
 
-| Label | Description |
-| :---- | :-----------|
+| Label | Description                                    |
+| :---- | :--------------------------------------------- |
 | `job` | Set to the value of `argument.job_label.value` |
 
 ---
