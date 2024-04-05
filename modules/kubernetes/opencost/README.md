@@ -4,11 +4,11 @@ Handles scraping OpenCost Exporter metrics.
 
 ## Components
 
--   [kubernetes](#kubernetes)
--   [local](#local)
--   [scrape](#scrape)
+-   [`kubernetes`](#kubernetes)
+-   [`local`](#local)
+-   [`scrape`](#scrape)
 
-### kubernetes
+### `kubernetes`
 
 Handles discovery of kubernetes targets and exports them, this component does not perform any scraping at all and is not required to be used for kubernetes, as a custom service discovery and targets can be defined and passed to `opencost.scrape`
 
@@ -40,7 +40,7 @@ The following labels are automatically added to exported targets.
 
 ---
 
-### local
+### `local`
 
 #### Arguments
 
@@ -64,7 +64,7 @@ The following labels are automatically added to exported targets.
 
 ---
 
-### scrape
+### `scrape`
 
 #### Arguments
 
@@ -73,7 +73,6 @@ The following labels are automatically added to exported targets.
 | `targets`         | _yes_    | `list(map(string))`                | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`            | Must be a where scraped should be forwarded to                                                                                                      |
 | `job_label`       | _no_     | `integrations/kubernetes/opencost` | The job label to add for all metrics                                                                                                                |
-| `port_name`       | _no_     | `http-metrics`                     | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228)      | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235)      | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                              | How often to scrape metrics from the targets                                                                                                        |
@@ -93,7 +92,7 @@ The following labels are automatically added to exported targets.
 
 ## Usage
 
-### Kubernetes
+### `kubernetes`
 
 The following example will scrape all opencost instances in cluster.
 
@@ -117,7 +116,7 @@ opencost.scrape "metrics" {
 }
 
 // write the metrics
-prometheus.remote_write "local_primary" {
+prometheus.remote_write "local" {
   endpoint {
     url = "http://mimir:9009/api/v1/push"
 
@@ -129,7 +128,7 @@ prometheus.remote_write "local_primary" {
 }
 ```
 
-### Local
+### `local`
 
 The following example will scrape opencost for metrics on the local machine.
 
