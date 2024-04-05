@@ -246,8 +246,8 @@ The following example will scrape all agents in cluster.
 ```river
 import.git "k8s" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/core/metrics.river"
+  revision = "main"
+  path = "modules/kubernetes/core/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -272,42 +272,6 @@ k8s.kubelet "scrape" {
 
 // write the metrics
 prometheus.remote_write "local" {
-  endpoint {
-    url = "http://mimir:9009/api/v1/push"
-
-    basic_auth {
-      username = "example-user"
-      password = "example-password"
-    }
-  }
-}
-```
-
-### `local`
-
-The following example will scrape the agent for metrics on the local machine.
-
-```river
-import.git "agent" {
-  repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/agent/module.river"
-  pull_frequency = "15m"
-}
-
-// get the targets
-agent.local "targets" {}
-
-// scrape the targets
-agent.scrape "metrics" {
-  targets = agent.local.targets.output
-  forward_to = [
-    prometheus.remote_write.default.receiver,
-  ]
-}
-
-// write the metrics
-prometheus.remote_write "default" {
   endpoint {
     url = "http://mimir:9009/api/v1/push"
 

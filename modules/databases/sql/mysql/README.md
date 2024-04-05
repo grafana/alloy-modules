@@ -101,8 +101,8 @@ The following example will scrape all mysql instances in cluster.
 ```river
 import.git "mysql" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/mysql/module.river"
+  revision = "main"
+  path = "modules/databases/sql/mysql/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -137,8 +137,8 @@ The following example will scrape mysql for metrics on the local machine.
 ```river
 import.git "mysql" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/mysql/module.river"
+  revision = "main"
+  path = "modules/databases/sql/mysql/metrics.river"
   pull_frequency = "15m"
 }
 

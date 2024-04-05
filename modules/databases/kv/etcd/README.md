@@ -100,8 +100,8 @@ The following example will scrape all etcd instances in cluster.
 ```river
 import.git "etcd" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/etcd/module.river"
+  revision = "main"
+  path = "modules/databases/kv/etcd/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -136,8 +136,8 @@ The following example will scrape etcd for metrics on the local machine.
 ```river
 import.git "etcd" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/etcd/module.river"
+  revision = "main"
+  path = "modules/databases/kv/etcd/metrics.river"
   pull_frequency = "15m"
 }
 

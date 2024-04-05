@@ -101,8 +101,8 @@ The following example will scrape all postgres instances in cluster.
 ```river
 import.git "postgres" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/postgres/module.river"
+  revision = "main"
+  path = "modules/databases/sql/postgres/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -137,8 +137,8 @@ The following example will scrape postgres for metrics on the local machine.
 ```river
 import.git "postgres" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/postgres/module.river"
+  revision = "main"
+  path = "modules/databases/sql/postgres/metrics.river"
   pull_frequency = "15m"
 }
 

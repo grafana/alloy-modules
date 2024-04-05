@@ -75,8 +75,8 @@ The following example will scrape all konnectivity instances in cluster.
 ```river
 import.git "konnectivity" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/konnectivity/module.river"
+  revision = "main"
+  path = "modules/kubernetes/konnectivity-agent/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -93,42 +93,6 @@ konnectivity.scrape "metrics" {
 
 // write the metrics
 prometheus.remote_write "local" {
-  endpoint {
-    url = "http://mimir:9009/api/v1/push"
-
-    basic_auth {
-      username = "example-user"
-      password = "example-password"
-    }
-  }
-}
-```
-
-### `local`
-
-The following example will scrape konnectivity for metrics on the local machine.
-
-```river
-import.git "konnectivity" {
-  repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/konnectivity/module.river"
-  pull_frequency = "15m"
-}
-
-// get the targets
-konnectivity.local "targets" {}
-
-// scrape the targets
-konnectivity.scrape "metrics" {
-  targets = konnectivity.local.targets.output
-  forward_to = [
-    prometheus.remote_write.default.receiver,
-  ]
-}
-
-// write the metrics
-prometheus.remote_write "default" {
   endpoint {
     url = "http://mimir:9009/api/v1/push"
 

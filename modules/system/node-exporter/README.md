@@ -101,8 +101,8 @@ The following example will scrape all node_exporter instances in cluster.
 ```river
 import.git "node_exporter" {
   repository = "https://github.com/node_exporter/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/node_exporter/module.river"
+  revision = "main"
+  path = "modules/system/node-exporter/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -137,8 +137,8 @@ The following example will scrape node_exporter for metrics on the local machine
 ```river
 import.git "node_exporter" {
   repository = "https://github.com/node_exporter/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/node_exporter/module.river"
+  revision = "main"
+  path = "modules/system/node-exporter/metrics.river"
   pull_frequency = "15m"
 }
 

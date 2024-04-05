@@ -29,7 +29,7 @@ declare "kubernetes" {
   }
 
   argument "port_name" {
-    comment = "The of the port to scrape metrics from (default: http-metrics)"
+    comment = "The of the port to scrape metrics from (default: http)"
     optional = true
   }
 

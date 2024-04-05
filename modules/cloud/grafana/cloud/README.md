@@ -47,8 +47,8 @@ The token must have permissions to read stack information. The setup of these pe
 ```river
 import.git "grafana_cloud" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "modules/cloud/grafana.river"
+  revision = "main"
+  path = "modules/cloud/grafana.river"
   pull_frequency = "15m"
 }
 

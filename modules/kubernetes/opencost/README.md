@@ -99,8 +99,8 @@ The following example will scrape all opencost instances in cluster.
 ```river
 import.git "opencost" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/opencost/module.river"
+  revision = "main"
+  path = "modules/kubernetes/opencost/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -117,42 +117,6 @@ opencost.scrape "metrics" {
 
 // write the metrics
 prometheus.remote_write "local" {
-  endpoint {
-    url = "http://mimir:9009/api/v1/push"
-
-    basic_auth {
-      username = "example-user"
-      password = "example-password"
-    }
-  }
-}
-```
-
-### `local`
-
-The following example will scrape opencost for metrics on the local machine.
-
-```river
-import.git "opencost" {
-  repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/opencost/module.river"
-  pull_frequency = "15m"
-}
-
-// get the targets
-opencost.local "targets" {}
-
-// scrape the targets
-opencost.scrape "metrics" {
-  targets = opencost.local.targets.output
-  forward_to = [
-    prometheus.remote_write.default.receiver,
-  ]
-}
-
-// write the metrics
-prometheus.remote_write "default" {
   endpoint {
     url = "http://mimir:9009/api/v1/push"
 

@@ -75,6 +75,7 @@ The following labels are automatically added to exported targets.
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
 | `job_label`       | _no_     | `integrations/rabbitmq`       | The job label to add for all metrics                                                                                                                |
+| `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                              |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
@@ -101,8 +102,8 @@ The following example will scrape all rabbitmq instances in cluster.
 ```river
 import.git "rabbitmq" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/rabbitmq/module.river"
+  revision = "main"
+  path = "modules/brokers/rabbitmq/metric.river"
   pull_frequency = "15m"
 }
 
@@ -137,8 +138,8 @@ The following example will scrape rabbitmq for metrics on the local machine.
 ```river
 import.git "rabbitmq" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/rabbitmq/module.river"
+  revision = "main"
+  path = "modules/brokers/rabbitmq/metric.river"
   pull_frequency = "15m"
 }
 

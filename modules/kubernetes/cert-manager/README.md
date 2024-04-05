@@ -101,8 +101,8 @@ The following example will scrape all cert_manager instances in cluster.
 ```river
 import.git "cert_manager" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/cert_manager/module.river"
+  revision = "main"
+  path = "modules/kubernetes/cert-manager/metrics.river"
   pull_frequency = "15m"
 }
 
@@ -137,8 +137,8 @@ The following example will scrape cert_manager for metrics on the local machine.
 ```river
 import.git "cert_manager" {
   repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "v2/integrations/cert_manager/module.river"
+  revision = "main"
+  path = "v2/integrations/cert_manager/module.river"
   pull_frequency = "15m"
 }
 
