@@ -53,7 +53,10 @@ import.git "grafana_cloud" {
 }
 
 // get the receivers
-grafana_cloud.stack "receivers" {}
+grafana_cloud.stack "receivers" {
+  stack = "DashyMcDashFace"
+  token = "XXXXXXXXXXXXX"
+}
 
 // scrape metrics and write to grafana cloud
 prometheus.scrape "default" {
