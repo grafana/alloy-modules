@@ -100,7 +100,7 @@ The following example will scrape all redis instances in cluster.
 
 ```river
 import.git "redis" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/databases/kv/redis/metrics.river"
   pull_frequency = "15m"
@@ -136,7 +136,7 @@ The following example will scrape redis for metrics on the local machine.
 
 ```river
 import.git "redis" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/databases/kv/redis/metrics.river"
   pull_frequency = "15m"

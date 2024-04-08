@@ -288,7 +288,7 @@ The following example will scrape all metric annotation instances in cluster.
 
 ```river
 import.git "metric_annotations" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/kubernetes/annotations/metrics.river"
   pull_frequency = "15m"
@@ -326,7 +326,7 @@ The following example will scrape all probe annotation instances in cluster.
 
 ```river
 import.git "probe_annotations" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/kubernetes/annotations/probes.river"
   pull_frequency = "15m"

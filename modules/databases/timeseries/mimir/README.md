@@ -100,7 +100,7 @@ The following example will scrape all Mimir instances in cluster.
 
 ```river
 import.git "mimir" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/databases/timeseries/mimir/metrics.river"
   pull_frequency = "15m"
@@ -136,7 +136,7 @@ The following example will scrape Mimir for metrics on the local machine.
 
 ```river
 import.git "mimir" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/databases/timeseries/mimir/metrics.river"
   pull_frequency = "15m"

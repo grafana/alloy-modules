@@ -68,7 +68,7 @@ The following example will scrape all push-gateway in cluster.
 
 ```river
 import.git "push_gateway" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/collectors/push-gateway/metrics.river"
   pull_frequency = "15m"

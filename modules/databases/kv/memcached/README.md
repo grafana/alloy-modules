@@ -100,7 +100,7 @@ The following example will scrape all memcached instances in cluster.
 
 ```river
 import.git "memcached" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/databases/kv/memcached/metrics.river"
   pull_frequency = "15m"
@@ -136,7 +136,7 @@ The following example will scrape memcached for metrics on the local machine.
 
 ```river
 import.git "memcached" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/databases/kv/memcached/metrics.river"
   pull_frequency = "15m"

@@ -98,7 +98,7 @@ The following example will scrape all gitlab instances in cluster.
 
 ```river
 import.git "gitlab" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/source-control/gitlab/metrics.river"
   pull_frequency = "15m"
@@ -134,7 +134,7 @@ The following example will scrape gitlab for metrics on the local machine.
 
 ```river
 import.git "gitlab" {
-  repository = "https://github.com/grafana/agent-modules.git"
+  repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
   path = "modules/source-control/gitlab/metrics.river"
   pull_frequency = "15m"
