@@ -25,7 +25,7 @@ generate_list() {
       echo "${indent}-   [${dir_name}](${dir}/)"
       # Check and list subdirectories if they contain .md files
       if [ "$(find "$dir" -mindepth 1 -maxdepth 1 -type d)" ]; then
-        generate_list "$dir" "$indent  "
+        generate_list "$dir" "$indent    "
       fi
     fi
   done
