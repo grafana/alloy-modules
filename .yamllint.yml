@@ -1,0 +1,17 @@
+---
+yaml-files:
+  - "*.yaml"
+  - "*.yml"
+  - ".yamllint"
+
+ignore:
+  - node_modules
+  - .git
+  - .github
+
+extends: default
+
+rules:
+  line-length:
+    max: 150
+    level: warning

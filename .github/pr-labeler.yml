@@ -1,0 +1,125 @@
+---
+# Use the following command to test globs locally:
+# compgen -G '<glob-pattern>'
+
+# Add 'brokers' label to any changes within 'modules' that references 'brokers'
+brokers:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**brokers**'
+
+# Add 'cloud' label to any changes within 'modules' that references 'cloud'
+cloud:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**cloud**'
+
+# Add 'aws' label to any changes within 'modules' that references 'cloud'
+aws:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/cloud/**aws**'
+
+# Add 'azure' label to any changes within 'modules' that references 'aws'
+azure:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/cloud/**azure**'
+
+# Add 'gcp' label to any changes within 'modules' that references 'azure'
+gcp:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/cloud/**gcp**'
+
+# Add 'grafana' label to any changes within 'modules' that references 'gcp'
+grafana:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/cloud/**grafana**'
+
+# Add 'collectors' label to any changes within 'modules' that references 'collectors'
+collectors:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**collectors**'
+
+# Add 'ci / cd' label to any changes within 'modules' that references 'ci' or 'cd
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file: '.*'    # dotfiles
+      - any-glob-to-any-file: 'Makefile'
+      - any-glob-to-any-file: 'package.json'
+      - any-glob-to-any-file: 'tools/**/*'
+
+# Add 'kubernetes' label to any changes within 'modules' that references 'kubernetes'
+kubernetes:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**kubernetes**'
+
+# Add 'networking' label to any changes within 'modules' that references 'networking'
+networking:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**networking**'
+
+# Add 'source-control' label to any changes within 'modules' that references 'source-control'
+source-control:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**source-control**'
+
+# Add 'system' label to any changes within 'modules' that references 'system'
+system:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**system**'
+
+# Add 'k6' label to any changes within 'modules' that references 'k6'
+ui:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**ui**'
+
+# Add 'utils' label to any changes within 'modules' that references 'utils'
+utils:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**utils**'
+
+# Add 'loki' label to any changes within 'modules' that references 'loki'
+loki:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**loki**'
+
+# Add 'mimir' label to any changes within 'modules' that references 'mimir'
+mimir:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**mimir**'
+
+# Add 'logs' label to any changes within 'modules' that references 'logs'
+logs:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**logs**'
+
+# Add 'logs' label to any changes within 'modules' that references 'metrics'
+metrics:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**metrics**'
+
+# Add 'otel' label to any changes within 'modules' that references 'otel'
+otel:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**otel**'
+
+# Add 'pyroscope' label to any changes within 'modules' that references 'pyroscope' or 'profil'
+pyroscope:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**pyroscope**'
+      - any-glob-to-any-file: 'modules/**/**profil**'
+
+# Add 'tempo' label to any changes within 'modules' that references 'tempo' or 'trac'
+tempo:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**tempo**'
+      - any-glob-to-any-file: 'modules/**/**trac**'
+
+# Add 'unix' label to any changes within 'modules' that references 'linux' or 'unix' or 'node-exporter'
+unix:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**linux**'
+      - any-glob-to-any-file: 'modules/**/**unix**'
+      - any-glob-to-any-file: 'modules/**/**node-exporter**'
+
+# Add 'windows' label to any changes within 'modules' that references 'windows'
+windows:
+  - changed-files:
+      - any-glob-to-any-file: 'modules/**/**windows**'

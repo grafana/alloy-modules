@@ -1,0 +1,59 @@
+---
+# Use the following command to test globs locally:
+
+brokers:
+  - '(broker|brokers|kafka|rabbitmq|nats|nats-streaming)'
+
+cloud:
+  - '(cloud|aws|azure|gcp|google|alibaba|tencent|oracle|digitalocean|linode|vultr|upcloud|scaleway|hetzner|ovh|cloudflare)'
+
+aws:
+  - '(aws|amazon|ec2|s3|lambda|cloudfront|route53|eks|ecr|ecs|fargate|cloudwatch|cloudtrail|cloudformation|cfn|cognito|iam|sts|sqs|sns|sqs)'
+
+azure:
+  - '(azure|azurerm|aks|acr|app-service|cosmosdb|keyvault|vm|virtual-machine|vnet|virtual-network|storage|blob|table|queue|file|cdn|frontdoor)'
+
+gcp:
+  - '(gcp|google|gke|gce|gcs|cloud-storage|cloud-functions|cloud-run|cloud-sql|cloud-spanner|cloud-pubsub|cloud-iot|cloud-tpu|cloud-ml|cloud-ai)'
+
+grafana:
+  - '(grafana|grafana-labs|grafana-cloud|grafana-enterprise|grafana-agent|grafana-loki|raintank|metrictank)'
+
+kubernetes:
+  - '(kube|k8s|kubernetes|cadvisor|kubeadm|kubectl|kube-?proxy|kube-scheduler|kube-controller|kube-?apiserver|kubelet)'
+
+loki:
+  - '(loki|gel|log|logql|enterprise(-| )log|promtail)'
+
+mimir:
+  - '(mimir|gem|prometheus|promql|enterprise(-| )?metric)'
+
+ci-cd:
+  - '(lint|tag|release|deploy|ci|cd|pipeline|workflow|github-actions)'
+
+openshift:
+  - '(openshift|oc|oadm|oadmin|ocp|okd|openshift-origin)'
+
+otel:
+  - '(otel|instrument|telemetry|trace|tracing|opentelemetry|jaeger|zipkin)'
+
+system:
+  - '(system|linux|unix|macos|windows|freebsd|openbsd|netbsd|dragonfly|solaris|aix|esxi|vmware||ubuntu|debian|centos|rhel|fedora|suse|raspbian|raspberry)'
+
+pyroscope:
+  - '(pyroscope|profile|profiling|heap|goroutine|goroutines|flamegraph|flame)'
+
+tempo:
+  - '(tempo|trace|tracing|jaeger|zipkin|opentelemetry)'
+
+windows:
+  - '(windows|win|wmi|perfmon|eventlog|event-log|eventviewer|event-viewer)'
+
+utils:
+  - '(utils)'
+
+logs:
+  - '(logs)'
+
+metrics:
+  - '(metrics)'
