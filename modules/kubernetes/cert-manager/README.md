@@ -1,11 +1,10 @@
-# Memcached Module
+# Cert-Manager Module
 
-Handles scraping Memcached metrics.
+Handles scraping Cert-Manager metrics.
 
 ## Components
 
 -   [`kubernetes`](#kubernetes)
--   [`local`](#local)
 -   [`scrape`](#scrape)
 
 ### `kubernetes`
@@ -39,30 +38,6 @@ The following labels are automatically added to exported targets.
 | `pod`       | The full name of the pod                                                                                                                            |
 | `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                   |
 | `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `ReplicaSet/my-app` |
-
----
-
-### `local`
-
-#### Arguments
-
-| Name   | Optional | Default | Description                            |
-| :----- | :------- | :------ | :------------------------------------- |
-| `port` | `true`   | `9402`  | The of the port to scrape metrics from |
-
-#### Exports
-
-| Name     | Type                | Description                |
-| :------- | :------------------ | :--------------------------|
-| `output` | `list(map(string))` | List of discovered targets |
-
-#### Labels
-
-The following labels are automatically added to exported targets.
-
-| Label    | Description                                                                                  |
-| :------- | :------------------------------------------------------------------------------------------- |
-| `source` | Constant value of `local`, denoting where the results came from, this can be useful for LBAC |
 
 ---
 
