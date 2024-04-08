@@ -2,8 +2,8 @@
 
 **Modules:**
 
--   [`metrics.river`](#metrics-river)
--   [`probes.river`](#probes-river)
+-   [`metrics.river`](#metricsriver)
+-   [`probes.river`](#probesriver)
 
 ## `metrics.river`
 
