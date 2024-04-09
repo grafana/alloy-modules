@@ -20,10 +20,10 @@ declare "stack" {
   // Setup the prometheus remote write receiver
   prometheus.remote_write "default" {
     endpoint {
-      url = json_decode(remote.http.config_file.content)["hmInstancePromUrl"] + "/api/prom/push"
+      url = json_decode(remote.http.config.content)["hmInstancePromUrl"] + "/api/prom/push"
 
       basic_auth {
-        username = json_decode(remote.http.config_file.content)["hmInstancePromId"]
+        username = json_decode(remote.http.config.content)["hmInstancePromId"]
         password = argument.token.value
       }
     }
@@ -32,10 +32,10 @@ declare "stack" {
   // Setup the loki write receiver
   loki.write "default" {
     endpoint {
-      url = json_decode(remote.http.config_file.content)["hlInstanceUrl"] + "/loki/api/v1/push"
+      url = json_decode(remote.http.config.content)["hlInstanceUrl"] + "/loki/api/v1/push"
 
       basic_auth {
-        username = json_decode(remote.http.config_file.content)["hlInstanceId"]
+        username = json_decode(remote.http.config.content)["hlInstanceId"]
         password = argument.token.value
       }
     }
@@ -43,13 +43,13 @@ declare "stack" {
 
   // Setup the traces receiver
   otelcol.auth.basic "default" {
-    username = json_decode(remote.http.config_file.content)["htInstanceId"]
+    username = json_decode(remote.http.config.content)["htInstanceId"]
     password = argument.token.value
   }
 
   otelcol.exporter.otlp "default" {
     client {
-      endpoint = json_decode(remote.http.config_file.content)["htInstanceUrl"] + ":443"
+      endpoint = json_decode(remote.http.config.content)["htInstanceUrl"] + ":443"
       auth     = otelcol.auth.basic.default.handler
     }
   }
@@ -57,10 +57,10 @@ declare "stack" {
   // Setup the pyroscope write receiver
   pyroscope.write "default" {
     endpoint {
-      url = json_decode(remote.http.config_file.content)["hpInstanceUrl"]
+      url = json_decode(remote.http.config.content)["hpInstanceUrl"]
 
       basic_auth {
-        username = json_decode(remote.http.config_file.content)["hpInstanceId"]
+        username = json_decode(remote.http.config.content)["hpInstanceId"]
         password = argument.token.value
       }
     }
@@ -81,6 +81,6 @@ declare "stack" {
     value = pyroscope.write.default.receiver
   }
   export "info" {
-    value = json_decode(remote.http.config_file.content)
+    value = json_decode(remote.http.config.content)
   }
 }
