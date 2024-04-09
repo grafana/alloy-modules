@@ -11,7 +11,7 @@
 
 **NOTE: This is only to be used for Modules not Modules Classic.**
 
-[Modules](https://grafana.com/docs/alloy/latest/concepts/modules/) are a way to create Grafana Agent [Flow](https://grafana.com/docs/alloy/latest/) configurations which can be loaded as a component. Modules are a great way to parameterize a configuration to create reusable pipelines.
+[Modules](https://grafana.com/docs/alloy/latest/concepts/modules/) are a way to create Grafana [Alloy](https://grafana.com/docs/alloy/latest/) configurations which can be loaded as a component. Modules are a great way to parameterize a configuration to create reusable pipelines.
 
 ## Submitting modules
 
