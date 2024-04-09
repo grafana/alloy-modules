@@ -78,7 +78,7 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=grafana-agent\"])"
+    comment = "The label selectors to use to find matching targets (default: [])"
     optional = true
   }
 
@@ -112,7 +112,7 @@ declare "kubernetes" {
   }
 
   // annotations service discovery
-  discovery.kubernetes "probes" {
+  discovery.kubernetes "probe_annotations" {
     role = coalesce(argument.role.value, "service")
 
     selectors {
@@ -127,7 +127,7 @@ declare "kubernetes" {
   }
 
   discovery.relabel "probes" {
-    targets = discovery.kubernetes.probes.targets
+    targets = discovery.kubernetes.probe_annotations.targets
 
     /****************************************************************************************************************
     * Handle Targets to Keep or Drop
@@ -403,7 +403,7 @@ declare "kubernetes" {
   }
 
   export "output" {
-    value = discovery.relabel.probes.output
+    value = discovery.relabel.probe_annotations.output
   }
 }
 

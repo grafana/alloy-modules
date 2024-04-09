@@ -117,7 +117,7 @@ declare "kubernetes" {
   }
 
   argument "tenant" {
-    comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+    comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the metrics.grafana.com/tenant annotation, and this can be a regex."
     optional = true
     default = ".*"
   }
@@ -151,7 +151,7 @@ declare "kubernetes" {
   }
 
   // annotations service discovery
-  discovery.kubernetes "annotations" {
+  discovery.kubernetes "metric_annotations" {
     role = coalesce(argument.role.value, "endpoints")
 
     selectors {
@@ -165,8 +165,8 @@ declare "kubernetes" {
     }
   }
 
-  discovery.relabel "annotations" {
-    targets = discovery.kubernetes.annotations.targets
+  discovery.relabel "metric_annotations" {
+    targets = discovery.kubernetes.metric_annotations.targets
 
     /****************************************************************************************************************
     * Handle Targets to Keep or Drop
@@ -480,7 +480,7 @@ declare "kubernetes" {
   }
 
   export "output" {
-    value = discovery.relabel.annotations.output
+    value = discovery.relabel.metric_annotations.output
   }
 }
 
