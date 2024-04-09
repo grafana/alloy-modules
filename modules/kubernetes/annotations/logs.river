@@ -185,7 +185,7 @@ declare "from_worker" {
   }
 
   export "receiver" {
-    forward_to = loki.process.parse.receiver
+    value = loki.process.parse.receiver
   }
 
   discovery.relabel "worker_logs" {
@@ -315,7 +315,7 @@ declare "process" {
   }
 
   export "receiver" {
-    forward_to = loki.process.process.receiver
+    value = loki.process.process.receiver
   }
 
   // parse the log based on the container runtime
