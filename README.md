@@ -6,7 +6,7 @@
 </a>
 
 <p align="center">
-    <img src="assets/logo_alloy_light.svg#gh-dark-mode-only" alt="Grafana Alloy logo" height="100px">
+    <img src="assets/logo_alloy_light.svg" alt="Grafana Alloy logo" height="100px">
 </p>
 
 **NOTE: This is only to be used for Modules not Modules Classic.**
