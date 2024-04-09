@@ -1,0 +1,464 @@
+
+declare "kubernetes" {
+  // arguments for kubernetes discovery
+  argument "namespaces" {
+    comment = "The namespaces to look for targets in (default: [\"kube-system\"] is all namespaces)"
+    optional = true
+  }
+
+  argument "field_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [])"
+    optional = true
+  }
+
+  argument "label_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [\"k8s-app=konnectivity-agent\"])"
+    optional = true
+  }
+
+  argument "annotation" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
+    // i.e. metrics.grafana.com, then again for prometheus.io
+    comment = "The annotation namespace to use (default: metrics.grafana.com)"
+    default = "logs.grafana.com"
+    optional = true
+  }
+
+  argument "tenant" {
+    comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+    optional = true
+    default = ".*"
+  }
+
+  /*
+    Hidden Arguments
+    These arguments are used to set reusable variables to avoid repeating logic
+  */
+  argument "__sd_annotation" {
+    optional = true
+    comment = "The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
+    default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
+  }
+
+  // find all pods
+  discovery.kubernetes "log_annotations" {
+    role = "pod"
+
+    selectors {
+      role = "pod"
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, []), ",")
+    }
+
+    namespaces {
+      names = coalesce(argument.namespaces.value, [])
+    }
+  }
+
+  // apply relabelings
+  discovery.relabel "log_annotations" {
+    targets = discovery.kubernetes.log_annotations.targets
+
+    // allow pods to declare their logs to be ingested or not, the default is true
+    //   i.e. logs.grafana.com/ingest: false
+    rule {
+      action = "keep"
+      source_labels = [
+        "__meta_kubernetes_pod_annotation_" + argument.__sd_annotation.value + "_ingest",
+      ]
+      regex = "^(true|)$"
+    }
+
+    // allow pods to declare what tenant their logs should be written to, the following annotation is supported:
+    //   logs.grafana.com/tenant: "primary"
+    rule {
+      action = "keep"
+      source_labels = [
+        "__meta_kubernetes_pod_annotation_" + argument.__sd_annotation.value + "_ingest",
+      ]
+      regex = "^(" + argument.tenant.value + ")$"
+    }
+
+    // set the instance label as the name of the worker node the pod is on
+    rule {
+      action = "replace"
+      source_labels = ["__meta_kubernetes_pod_node_name"]
+      target_label = "instance"
+    }
+
+    // set the namespace label
+    rule {
+      source_labels = ["__meta_kubernetes_namespace"]
+      target_label  = "namespace"
+    }
+
+    // set the pod label
+    rule {
+      source_labels = ["__meta_kubernetes_pod_name"]
+      target_label  = "pod"
+    }
+
+    // set the container label
+    rule {
+      source_labels = ["__meta_kubernetes_pod_container_name"]
+      target_label  = "container"
+    }
+
+    // set a workload label
+    rule {
+      source_labels = [
+        "__meta_kubernetes_pod_controller_kind",
+        "__meta_kubernetes_pod_controller_name",
+      ]
+      separator = "/"
+      target_label  = "workload"
+    }
+    // remove the hash from the ReplicaSet
+    rule {
+      source_labels = ["workload"]
+      regex = "(ReplicaSet/.+)-.+"
+      target_label  = "workload"
+    }
+
+    // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"
+    rule {
+      action = "replace"
+      source_labels = [
+        "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+        "__meta_kubernetes_pod_label_k8s_app",
+        "__meta_kubernetes_pod_label_app",
+      ]
+      separator = ";"
+      regex = "^(?:;*)?([^;]+).*$"
+      replacement = "$1"
+      target_label = "app"
+    }
+
+    // set the component if specified as metadata labels "component:" or "app.kubernetes.io/component:" or "k8s-component:"
+    rule {
+      action = "replace"
+      source_labels = [
+        "__meta_kubernetes_pod_label_app_kubernetes_io_component",
+        "__meta_kubernetes_pod_label_k8s_component",
+        "__meta_kubernetes_pod_label_component",
+      ]
+      regex = "^(?:;*)?([^;]+).*$"
+      replacement = "$1"
+      target_label = "component"
+    }
+
+    // set a source label
+    rule {
+      action = "replace"
+      replacement = "kubernetes"
+      target_label = "source"
+    }
+
+    // set the job label to be namespace / friendly pod name
+    rule {
+      action = "replace"
+      source_labels = [
+        "workload",
+        "__meta_kubernetes_namespace",
+      ]
+      regex = ".+\\/(.+);(.+)"
+      replacement = "$2/$1"
+      target_label = "job"
+    }
+  }
+
+  export "output" {
+    value = discovery.relabel.log_annotations.output
+  }
+}
+
+declare "from_worker" {
+  argument "targets" {
+    comment = "Must be a list() of targets"
+  }
+
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  export "receiver" {
+    forward_to = loki.process.parse.receiver
+  }
+
+  discovery.relabel "worker_logs" {
+    targets = argument.targets.value
+
+    // set the __path__, this is automatically translated as a label of filename (which should be dropped or normalized)
+    // DO NOT delete this line as it is needed to tail the pod logs on the node
+    rule {
+      action = "replace"
+      separator = "/"
+      source_labels = [
+        "__meta_kubernetes_pod_uid",
+        "__meta_kubernetes_pod_container_name",
+      ]
+      replacement = "/var/log/pods/*$1/*.log"
+      target_label = "__path__"
+    }
+
+    // set the __host__
+    rule {
+      action = "replace"
+      source_labels = ["__meta_kubernetes_pod_node_name"]
+      target_label = "__host__"
+    }
+
+    // as a result of kubernetes service discovery for pods, all of the meta data information is exposed in labels
+    // __meta_kubernetes_pod_*, including __meta_kubernetes_pod_container_id which can be used to determine what
+    // the pods container runtime is, docker (docker://...) or containerd (containerd://...) this will inform us
+    // which parsing stage to use.  However, any labels that begin with __* are not passed to loki.process
+    // (pipeline) stages. Use a relabeling stage to set a label that can be used a LogQL selector in the stage
+    // below so parsing can be automatically determined, then drop the label from the loki.process stage.
+    // set the container runtime as a label
+    rule {
+      action = "replace"
+      source_labels = ["__meta_kubernetes_pod_container_id"]
+      regex = "^(\\w+):\\/\\/.+$"
+      replacement = "$1"
+      target_label = "tmp_container_runtime"
+    }
+
+    // make all labels on the pod available to the pipeline as labels,
+    // they are omitted before write via labelallow unless explicitly set
+    rule {
+      action = "labelmap"
+      regex = "__meta_kubernetes_pod_label_(.+)"
+    }
+
+    // make all annotations on the pod available to the pipeline as labels,
+    // they are omitted before write via labelallow unless explicitly set
+    rule {
+      action = "labelmap"
+      regex = "__meta_kubernetes_pod_annotation_(.+)"
+    }
+  }
+
+  // find eligible files on the worker
+  local.file_match "pods" {
+    path_targets = discovery.relabel.worker_logs.output
+  }
+
+  // tail the files
+  loki.source.file "pods" {
+    targets = local.file_match.pods.targets
+    forward_to = [loki.process.parse.receiver]
+  }
+
+  // parse the log based on the container runtime
+  loki.process "parse" {
+    forward_to  = argument.forward_to.value
+    /*******************************************************************************
+     *                         Container Runtime Parsing
+     ********************************************************************************/
+    // if the label tmp_container_runtime from above is containerd parse using cri
+    stage.match {
+      selector = "{tmp_container_runtime=\"containerd\"}"
+      // the cri processing stage extracts the following k/v pairs: log, stream, time, flags
+      stage.cri {}
+
+      // Set the extract flags and stream values as labels
+      stage.labels {
+        values = {
+          flags  = "",
+          stream  = "",
+        }
+      }
+    }
+
+    // if the label tmp_container_runtime from above is docker parse using docker
+    stage.match {
+      selector = "{tmp_container_runtime=\"docker\"}"
+      // the docker processing stage extracts the following k/v pairs: log, stream, time
+      stage.docker {}
+
+      // Set the extract stream value as a label
+      stage.labels {
+        values = {
+          stream  = "",
+        }
+      }
+    }
+
+    // drop the temporary container runtime label as it is no longer needed
+    stage.label_drop {
+      values = ["tmp_container_runtime"]
+    }
+  }
+
+}
+
+// declare "api" {
+//
+// }
+
+declare "process" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "enable_structured_metadata" {
+    comment = "Whether or not structured metadata should be set"
+    optional = true
+  }
+
+  argument "structured_metadata" {
+    comment = "The structured metadata to set"
+    optional = true
+  }
+
+  export "receiver" {
+    forward_to = loki.process.process.receiver
+  }
+
+  // parse the log based on the container runtime
+  loki.process "process" {
+    forward_to  = argument.forward_to.value
+
+    /*******************************************************************************
+     *                         Structured Metadata
+     ********************************************************************************/
+    stage.static_labels {
+      values = {
+        tmp_enable_structured_metadata = format("%s", coalesce(argument.enable_structured_metadata.value, false)),
+      }
+    }
+
+    stage.match {
+      selector = "{tmp_enable_structured_metadata=\"true\"}"
+      stage.structured_metadata {
+        values = coalesce(argument.structured_metadata.value, {
+          filename = "filename",
+          instance = "instance",
+        })
+      }
+    }
+
+    /*******************************************************************************
+     *                         Normalize Filename
+     *******************************************************************************
+    Normalize the filename, the label "filename" is automatically created from discovered files in the matching path based on the
+    __path__ label from the relabel_configs.  This has extremely high cardinality, it can be useful for a pod with multiple
+    containers/sidecars to know where the log came from but we can greatly reduce the cardinality.
+    Example:
+      Filename: /var/log/pods/agents_agent-logs-grafana-agent-k8hpm_5cafa323-a7ed-4703-9220-640d3e44a5e3/config-reloader/0.log
+      Becomes: /var/log/pods/agents/agent-logs-grafana-agent/config-reloader.log
+    */
+    stage.regex {
+      // unescaped regex: ^(?P<path>\/([^\/_]+\/)+)[^\/]+\/(?P<container_folder>[^\/]+)\/[0-9]+\.log
+      expression = "^(?P<path>\\/([^\\/_]+\\/)+)[^\\/]+\\/(?P<container_folder>[^\\/]+)\\/[0-9]+\\.log"
+      source = "filename"
+    }
+
+    stage.template {
+      source = "normalized_filename"
+      template = "{{ .path }}{{ .job }}/{{ .container_folder }}.log"
+    }
+
+    stage.labels {
+      values = {
+        filename = "normalized_filename",
+      }
+    }
+  }
+
+  /*******************************************************************************
+  *                         Log-Level Parsing
+  ********************************************************************************/
+  // if a log level is not set, default it to unknown
+  stage.match {
+    selector = "{level=\"\"}"
+
+    // default level to unknown
+    stage.static_labels {
+      values = {
+        level = "unknown",
+      }
+    }
+
+  }
+
+  // if a log_type is not set, default it to unknown
+  stage.match {
+    selector = "{log_type=\"\"}"
+
+    // default level to unknown
+    stage.static_labels {
+      values = {
+        log_type = "unknown",
+      }
+    }
+
+  }
+
+  // check to see if the log line matches the klog format (https://github.com/kubernetes/klog)
+  stage.match {
+    // unescaped regex: ([IWED][0-9]{4}\s+[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]+)
+    selector = "{level=\"unknown\"} |~ \"([IWED][0-9]{4}\\\\s+[0-9]{2}:[0-9]{2}:[0-9]{2}\\\\.[0-9]+)\""
+
+    // extract log level, klog uses a single letter code for the level followed by the month and day i.e. I0119
+    stage.regex {
+      expression = "((?P<level>[A-Z])[0-9])"
+    }
+
+    // if the extracted level is I set INFO
+    stage.replace {
+      source = "level"
+      expression = "(I)"
+      replace = "INFO"
+    }
+
+    // if the extracted level is W set WARN
+    stage.replace {
+      source = "level"
+      expression = "(W)"
+      replace = "WARN"
+    }
+
+    // if the extracted level is E set ERROR
+    stage.replace {
+      source = "level"
+      expression = "(E)"
+      replace = "ERROR"
+    }
+
+    // if the extracted level is I set INFO
+    stage.replace {
+      source = "level"
+      expression = "(D)"
+      replace = "DEBUG"
+    }
+
+    // set the extracted level to be a label
+    stage.labels {
+      values = {
+        level = "",
+      }
+    }
+  }
+
+  // if the level is still unknown, do one last attempt at detecting it based on common levels
+  stage.match {
+    selector = "{level=\"unknown\"}"
+
+    // unescaped regex: (?i)(?:"(?:level|loglevel|levelname|lvl|SeverityText)":\s*"|\s+(?:level|loglevel|lvl)="?|\s+\[?)(?P<level>(DEBUG?|INFO|WARN(ING)?|ERR(OR)?|CRITICAL|FATAL|NOTICE|TRACE))("|\s+|-|\s*\])
+    stage.regex {
+      expression = "(?i)(?:\"(?:level|loglevel|levelname|lvl|SeverityText)\":\\s*\"|\\s+(?:level|loglevel|lvl)=\"?|\\s+\\[?)(?P<level>(DEBUG?|INFO|WARN(ING)?|ERR(OR)?|CRITICAL|FATAL|NOTICE|TRACE))(\"|\\s+|-|\\s*\\])"
+    }
+
+    // set the extracted level to be a label
+    stage.labels {
+      values = {
+        level = "",
+      }
+    }
+  }
+
+}
