@@ -72,22 +72,22 @@ The following labels are automatically added to exported targets.
 
 ### `local`
 
-The following example will scrape node_exporter for metrics on the local machine.
+The following example will configure Alloy to scrape Windows metrics on the local machine.
 
 ```river
-import.git "node_exporter" {
-  repository = "https://github.com/node_exporter/agent-modules.git"
+import.git "windows_exporter" {
+  repository = "https://github.com/grafana/alloy-modules.git"
   revision = "main"
-  path = "modules/system/node-exporter/metrics.river"
+  path = "modules/system/windows-exporter/metrics.river"
   pull_frequency = "15m"
 }
 
 // get the targets
-node_exporter.local "targets" {}
+windows_exporter.local "targets" {}
 
 // scrape the targets
-node_exporter.scrape "metrics" {
-  targets = node_exporter.local.targets.output
+windows_exporter.scrape "metrics" {
+  targets = windows_exporter.local.targets.output
   forward_to = [
     prometheus.remote_write.default.receiver,
   ]
