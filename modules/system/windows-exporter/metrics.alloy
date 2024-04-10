@@ -146,7 +146,7 @@ declare "scrape" {
 
   prometheus.scrape "windows_exporter" {
 		job_name 		= coalesce(argument.job_label.value, "integrations/windows_exporter")
-		forward_to 	= [prometheus.relable.windows_exporter.receiver]
+		forward_to 	= [prometheus.relabel.windows_exporter.receiver]
 		targets			= argument.targets.value
 		scrape_interval = coalesce(argument.scrape_interval.value, "60s")
 		scrape_timeout	= coalesce(argument.scrape_timeout.value, "10s")
