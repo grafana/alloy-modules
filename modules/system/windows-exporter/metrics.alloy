@@ -67,9 +67,6 @@ declare "local" {
   prometheus.exporter.windows "local" {
 		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"])
 
-
-
-
 		iis {
 			app_exclude 	= coalesce(argument.iis_app_exclude.value, "")
 			app_include 	= coalesce(argument.iis_app_include.value, ".*")
@@ -108,7 +105,8 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all node_exporter metric (default: integrations/node_exporter)"
+    comment = "The job label to add for all windows_exporter metric (default: integrations/windows_exporter)"
+		default = "integrations/windows_exporter"
     optional = true
   }
 
@@ -144,9 +142,9 @@ declare "scrape" {
   }
 
   prometheus.scrape "windows_exporter" {
-		job_name 		= coalesce(argument.job_label.value, "integrations/windows_exporter")
-		forward_to 	= [prometheus.relabel.windows_exporter.receiver]
-		targets			= argument.targets.value
+		job_name 				= coalesce(argument.job_label.value, "integrations/windows_exporter")
+		forward_to 			= [prometheus.relabel.windows_exporter.receiver]
+		targets					= argument.targets.value
 		scrape_interval = coalesce(argument.scrape_interval.value, "60s")
 		scrape_timeout	= coalesce(argument.scrape_timeout.value, "10s")
 
