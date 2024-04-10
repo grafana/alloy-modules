@@ -156,7 +156,7 @@ declare "scrape" {
 		}
   }
 
-  prometheus.relable "windows_exporter" {
+  prometheus.relabel "windows_exporter" {
 		forward_to 			= argument.forward_to.value
 		max_cache_size 	= coalesce(argument.max_cache_size.value, 100000)
 
