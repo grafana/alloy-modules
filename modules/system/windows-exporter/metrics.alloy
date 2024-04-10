@@ -64,7 +64,7 @@ declare "local" {
 		optional  = true
 	}
 
-  prometheus.exporter.windows "windows_exporter" {
+  prometheus.exporter.windows "local" {
 		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"])
 
 
@@ -96,7 +96,7 @@ declare "local" {
   }
 
 	export "output" {
-		value = prometheus.exporter.windows.windows_exporter.targets
+		value = prometheus.exporter.windows.local.targets
 	}
 }
 
