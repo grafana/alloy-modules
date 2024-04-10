@@ -65,7 +65,7 @@ declare "windows" {
 	}
 
   prometheus.exporter.windows "windows_exporter" {
-		enabled_collectors 	= coalesce(argument.collectors.value, "['cpu', 'cs', 'logical_disk', 'net', 'os', 'service', 'system', 'textfile', 'time', 'diskdrive']")
+		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"])
 		timeout				= coalesce(argument.timeout.value, "4m")
 
 		text_file {
