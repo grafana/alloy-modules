@@ -152,7 +152,7 @@ declare "scrape" {
 		scrape_timeout	= coalesce(argument.scrape_timeout.value, "10s")
 
 		clustering {
-			enable = coalesce(argument.clustering.value, false)
+			enabled = coalesce(argument.clustering.value, false)
 		}
   }
 
