@@ -3,7 +3,7 @@ Module: job-windows-exporter
 Description: Integrates and Scrapes Windows Exporter Metrics utlized in the Windows Integration in Grafana Cloud
 */
 
-declare "windows" {
+declare "local" {
   argument "collectors" {
 		comment 	= "The collectors to enable for the windows exporter integration"
 		optional 	= true
