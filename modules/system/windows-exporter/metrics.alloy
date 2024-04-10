@@ -65,7 +65,7 @@ declare "local" {
 	}
 
   prometheus.exporter.windows "local" {
-		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"])
+		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "system", "textfile", "time", "diskdrive"])
 
 		iis {
 			app_exclude 	= coalesce(argument.iis_app_exclude.value, "")
