@@ -61,6 +61,7 @@ declare "windows" {
 
 	argument "service_wql_where_clause" {
 		comment		= ""
+		optional  = true
 	}
 
   prometheus.exporter.windows "windows_exporter" {
