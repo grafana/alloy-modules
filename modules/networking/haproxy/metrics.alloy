@@ -37,7 +37,7 @@ declare "kubernetes" {
 
     selectors {
       role = "pod"
-      field = join(coalesce(argument.fieldselectors.value, []), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
       label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/component=haproxy"]), ",")
     }
 
