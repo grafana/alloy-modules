@@ -43,6 +43,16 @@ declare "kubernetes" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  // export the discovered targets
+  export "output" {
+    value = discovery.relabel.log_annotations.output
+  }
+
+  // export the annotation argument
+  export "annotation" {
+    value = coalesce(argument.annotation.value, "logs.grafana.com")
+  }
+
   // find all pods
   discovery.kubernetes "log_annotations" {
     role = "pod"
@@ -150,6 +160,19 @@ declare "kubernetes" {
       target_label = "component"
     }
 
+    // set the version if specified as metadata labels "version:" or "app.kubernetes.io/version:" or "app_version:"
+    rule {
+      action = "replace"
+      source_labels = [
+        "__meta_kubernetes_pod_label_app_kubernetes_io_version",
+        "__meta_kubernetes_pod_label_version",
+        "__meta_kubernetes_pod_label_app_version",
+      ]
+      regex = "^(?:;*)?([^;]+).*$"
+      replacement = "$1"
+      target_label = "version"
+    }
+
     // set a source label
     rule {
       action = "replace"
@@ -170,9 +193,6 @@ declare "kubernetes" {
     }
   }
 
-  export "output" {
-    value = discovery.relabel.log_annotations.output
-  }
 }
 
 declare "from_worker" {
@@ -304,16 +324,6 @@ declare "process" {
     comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   }
 
-  argument "enable_structured_metadata" {
-    comment = "Whether or not structured metadata should be set"
-    optional = true
-  }
-
-  argument "structured_metadata" {
-    comment = "The structured metadata to set"
-    optional = true
-  }
-
   export "receiver" {
     value = loki.process.process.receiver
   }
@@ -321,25 +331,6 @@ declare "process" {
   // parse the log based on the container runtime
   loki.process "process" {
     forward_to  = argument.forward_to.value
-
-    /*******************************************************************************
-     *                         Structured Metadata
-     ********************************************************************************/
-    stage.static_labels {
-      values = {
-        tmp_enable_structured_metadata = format("%s", coalesce(argument.enable_structured_metadata.value, false)),
-      }
-    }
-
-    stage.match {
-      selector = "{tmp_enable_structured_metadata=\"true\"}"
-      stage.structured_metadata {
-        values = coalesce(argument.structured_metadata.value, {
-          filename = "filename",
-          instance = "instance",
-        })
-      }
-    }
 
     /*******************************************************************************
      *                         Normalize Filename
@@ -381,7 +372,6 @@ declare "process" {
           level = "unknown",
         }
       }
-
     }
 
     // if a log_type is not set, default it to unknown
@@ -394,7 +384,6 @@ declare "process" {
           log_type = "unknown",
         }
       }
-
     }
 
     // check to see if the log line matches the klog format (https://github.com/kubernetes/klog)
@@ -459,5 +448,199 @@ declare "process" {
         }
       }
     }
+  }
+}
+
+declare "structured_metadata" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "metadata" {
+    optional = true
+  }
+
+  export "receiver" {
+    value = loki.process.structured_metadata.receiver
+  }
+
+  /*
+  As all of the pod labels and annotations we transformed into labels in the previous relabelings to make
+  them available to the pipeline processing we need to ensure they are not automatically created in Loki.
+  This would result in an extremely high number of labels and values severely impacting query performance.
+  Not every log has to contain these labels, but this list should reflect the set of labels that you want
+  to explicitly allow.
+  */
+  loki.process "structured_metadata" {
+    forward_to = argument.forward_to.value
+
+    stage.structured_metadata {
+      values = coalesce(argument.metadata.value, {
+        filename = "filename",
+        instance = "instance",
+        log_type = "log_type",
+        version = "version",
+        helm_chart = "helm_sh_chart",
+        pod = "pod",
+      })
+    }
+
+  }
+}
+
+declare "keep_labels" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "keep_labels" {
+    optional = true
+    // comment = "List of labels to keep before the log message is written to Loki"
+    default = [
+      "app",
+      "cluster",
+      "component",
+      "container",
+      "env",
+      "job",
+      "level",
+      "namespace",
+      "region",
+      "service",
+      "squad",
+      "team",
+      "workload",
+    ]
+  }
+
+  export "receiver" {
+    value = loki.process.keep_labels.receiver
+  }
+
+  /*
+  As all of the pod labels and annotations we transformed into labels in the previous relabelings to make
+  them available to the pipeline processing we need to ensure they are not automatically created in Loki.
+  This would result in an extremely high number of labels and values severely impacting query performance.
+  Not every log has to contain these labels, but this list should reflect the set of labels that you want
+  to explicitly allow.
+  */
+  loki.process "keep_labels" {
+    forward_to = argument.forward_to.value
+
+    stage.label_keep {
+      values = argument.keep_labels.value
+    }
+
+  }
+}
+
+declare "mask" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "annotation" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
+    // i.e. metrics.grafana.com, then again for prometheus.io
+    comment = "The annotation namespace to use (default: logs.grafana.com)"
+    default = "logs.grafana.com"
+    optional = true
+  }
+  /*
+    Hidden Arguments
+    These arguments are used to set reusable variables to avoid repeating logic
+  */
+  argument "__sd_annotation" {
+    optional = true
+    comment = "The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
+    default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
+  }
+
+  export "receiver" {
+    value = loki.process.mask.receiver
+  }
+
+  loki.process "mask" {
+    forward_to = argument.forward_to.value
+
+    // check logs.grafana.com/mask-credit-card annotation, if true the data will be masked as *credit-card*{hash}*
+    // Formats:
+    //   Visa: 4[0-9]{15}
+    //   MasterCard: 5[1-5][0-9]{14}
+    //   American Express: 3[47][0-9]{13}
+    //   Discover: 6[0-9]{15}
+    //   JCB: 3[51-55][0-9]{14}
+    stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-credit-card: true"
+      selector = "{" + argument.__sd_annotation.value + "_mask_credit_card=~\"(?i)true\"}"
+
+      stage.replace {
+        // unescaped regex: (4[0-9]{15}|5[1-5][0-9]{14}|3[47][0-9]{13}|6[0-9]{15}|3[51-55][0-9]{14})
+        expression = "(4[0-9]{15}|5[1-5][0-9]{14}|3[47][0-9]{13}|6[0-9]{15}|3[51-55][0-9]{14})"
+        replace = "*credit-card*{{ .Value | Hash \"salt\" }}*"
+      }
+    }
+
+    // check logs.grafana.com/mask-email annotation, if true the data will be masked as *email*{hash}*
+    stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-email: true"
+      selector = "{" + argument.__sd_annotation.value + "_mask_email=~\"(?i)true\"}"
+
+      stage.replace {
+        // unescaped regex: ([\w\.=-]+@[\w\.-]+\.[\w]{2,64})
+        expression = "([\\w\\.=-]+@[\\w\\.-]+\\.[\\w]{2,64})"
+        replace = "*email*{{ .Value | Hash \"salt\" }}*"
+      }
+    }
+
+    // check logs.grafana.com/mask-ipv4 annotation, if true the data will be masked as *ipv4*{hash}*
+    stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-ipv4: true"
+      selector = "{" + argument.__sd_annotation.value + "_mask_ipv4=~\"(?i)true\"}"
+
+      stage.replace {
+        // unescaped regex: ((\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})
+        expression = "((\\b25[0-5]|\\b2[0-4][0-9]|\\b[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})"
+        replace = "*ipv4*{{ .Value | Hash \"salt\" }}*"
+      }
+    }
+
+    // check logs.grafana.com/mask-ipv6 annotation, if true the data will be masked as *ipv6*{hash}*
+    stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-ipv6: true"
+      selector = "{" + argument.__sd_annotation.value + "_mask_ipv6=~\"(?i)true\"}"
+
+      stage.replace {
+        // unescaped regex: (([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))
+        expression = "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+        replace = "*ipv6*{{ .Value | Hash \"salt\" }}*"
+      }
+    }
+
+    // check logs.grafana.com/mask-phone annotation, if true the data will be masked as *phone*{hash}*
+    stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-phone: true"
+      selector = "{" + argument.__sd_annotation.value + "_mask_phone=~\"(?i)true\"}"
+
+      stage.replace {
+        // unescaped regex: ([\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6})
+        expression = "([\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6})"
+        replace = "*phone*{{ .Value | Hash \"salt\" }}*"
+      }
+    }
+
+    // check logs.grafana.com/mask-ssn annotation, if true the data will be masked as *ssn*{hash}*
+    stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-ssn: true"
+      selector = "{" + argument.__sd_annotation.value + "_mask_ssn=~\"(?i)true\"}"
+
+      stage.replace {
+        // unescaped regex: ([0-9]{3}-[0-9]{2}-[0-9]{4})
+        expression = "([0-9]{3}-[0-9]{2}-[0-9]{4})"
+        replace = "*ssn*{{ .Value | Hash \"salt\" }}*"
+      }
+    }
+
   }
 }
