@@ -66,7 +66,7 @@ declare "windows" {
 
   prometheus.exporter.windows "windows_exporter" {
 		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"])
-		timeout				= coalesce(argument.timeout.value, "4m")
+
 
 		text_file {
 			text_file_directory = coalesce(argument.textfile_directory, "C:\\Program Files\\GrafanaLabs\\Alloy\\textfile_inputs")
