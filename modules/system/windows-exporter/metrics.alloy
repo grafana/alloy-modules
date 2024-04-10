@@ -68,9 +68,7 @@ declare "local" {
 		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"])
 
 
-		text_file {
-			text_file_directory = coalesce(argument.textfile_directory, "C:\Program Files\GrafanaLabs\Alloy\textfile_inputs")
-		}
+
 
 		iis {
 			app_exclude 	= coalesce(argument.iis_app_exclude.value, "")
