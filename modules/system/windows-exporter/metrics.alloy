@@ -69,7 +69,7 @@ declare "local" {
 
 
 		text_file {
-			text_file_directory = coalesce(argument.textfile_directory, "C:\Program Files\GrafanaLabs\Alloy\textfile_inputs")
+			text_file_directory = coalesce(argument.textfile_directory, "C:/Program Files/GrafanaLabs/Alloy/textfile_inputs")
 		}
 
 		iis {
