@@ -171,7 +171,7 @@ declare "scrape" {
 
 		rule {
 			action 				= "replace"
-			source_labels = ["job"]
+			target_label  = "job"
 			replacement		= argument.job_label.value
 		}
   }
