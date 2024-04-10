@@ -11,9 +11,20 @@ Handles scraping Windows Exporter metrics.
 
 #### Arguments
 
-| Name         | Optional     | Default                                                                                             | Description                            |
-| :-----       | :-------     | :------                                                                                             | :------------------------------------- |
-| `collectors` | `true`       | `["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"]`  | The of the port to scrape metrics from |
+| Name                       | Optional     | Default                                                                                             | Description                            |
+| :-----                     | :-------     | :------                                                                                             | :------------------------------------- |
+| `collectors`               | `true`       | `["cpu", "cs", "logical_disk", "net", "os", "service", "system", "textfile", "time", "diskdrive"]`  | The of the port to scrape metrics from |
+| `timeout`                  | `true`       | `4m`                                                                                                | Timeout for collecting metrics         |
+| `textfile_directory`       | `true`       | `C:\Program Files\GrafanaLabs\Alloy\textfile_imports`                                               | The directory containing files to be ingested |
+| `iis_app_exclude`          | `true`       | `""`                                                                                                | Regular Expression of applications to ignore |
+| `iis_app_include`          | `true`       | `".*"`                                                                                              | Regular Expression of applications to report on |
+| `iis_site_exclude`         | `true`       | `""`                                                                                                | Regular Expression of sites to ignore |
+| `iis_site_include`         | `true`       | `".*"`                                                                                              | Regular Expression of sites to report on |
+| `logical_disk_exclude`     | `true`       | `""`                                                                                                | Regular Expression of volumes to exclude |
+| `logical_disk_include`     | `true`       | `".+"`                                                                                              | Regular Expression of volumes to include |
+| `process_exclude`          | `true`       | `""`                                                                                                | Regular Expression of processes to exclude |
+| `process_include`          | `true`       | `".*"`                                                                                              | Regular Expression of processes to include |
+| `service_wql_where_clause` | `true`       | `".*"`                                                                                              | WQL 'where' clause to use in WMI metrics query.|
 
 #### Exports
 
@@ -58,42 +69,6 @@ The following labels are automatically added to exported targets.
 ---
 
 ## Usage
-
-### `kubernetes`
-
-The following example will scrape all node_exporter instances in cluster.
-
-```river
-import.git "node_exporter" {
-  repository = "https://github.com/node_exporter/agent-modules.git"
-  revision = "main"
-  path = "modules/system/node-exporter/metrics.river"
-  pull_frequency = "15m"
-}
-
-// get the targets
-node_exporter.kubernetes "targets" {}
-
-// scrape the targets
-node_exporter.scrape "metrics" {
-  targets = node_exporter.kubernetes.targets.output
-  forward_to = [
-    prometheus.remote_write.default.receiver,
-  ]
-}
-
-// write the metrics
-prometheus.remote_write "local" {
-  endpoint {
-    url = "http://mimir:9009/api/v1/push"
-
-    basic_auth {
-      username = "example-user"
-      password = "example-password"
-    }
-  }
-}
-```
 
 ### `local`
 
