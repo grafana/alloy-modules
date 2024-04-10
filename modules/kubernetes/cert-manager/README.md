@@ -77,7 +77,7 @@ The following example will scrape all cert_manager instances in cluster.
 import.git "cert_manager" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/cert-manager/metrics.river"
+  path = "modules/kubernetes/cert-manager/metrics.alloy"
   pull_frequency = "15m"
 }
 

@@ -70,7 +70,7 @@ The following example will scrape all kube-state-metrics in cluster.
 import.git "ksm" {
   repository = "https://github.com/grafana/ksm-modules.git"
   revision = "main"
-  path = "modules/kubernetes/kube-state-metrics/metrics.river"
+  path = "modules/kubernetes/kube-state-metrics/metrics.alloy"
   pull_frequency = "15m"
 }
 

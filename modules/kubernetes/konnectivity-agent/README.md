@@ -76,7 +76,7 @@ The following example will scrape all konnectivity instances in cluster.
 import.git "konnectivity" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/konnectivity-agent/metrics.river"
+  path = "modules/kubernetes/konnectivity-agent/metrics.alloy"
   pull_frequency = "15m"
 }
 

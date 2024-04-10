@@ -101,7 +101,7 @@ The following example will scrape all consul instances in cluster.
 import.git "consul" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/networking/consul/metrics.river"
+  path = "modules/networking/consul/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -137,7 +137,7 @@ The following example will scrape consul for metrics on the local machine.
 import.git "consul" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/networking/consul/metrics.river"
+  path = "modules/networking/consul/metrics.alloy"
   pull_frequency = "15m"
 }
 

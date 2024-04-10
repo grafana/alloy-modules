@@ -100,7 +100,7 @@ The following example will scrape all opencost instances in cluster.
 import.git "opencost" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/opencost/metrics.river"
+  path = "modules/kubernetes/opencost/metrics.alloy"
   pull_frequency = "15m"
 }
 

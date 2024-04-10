@@ -102,7 +102,7 @@ The following example will scrape all agents in cluster.
 import.git "agent" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "module/collectors/agent/metric.river"
+  path = "module/collectors/agent/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +138,7 @@ The following example will scrape the agent for metrics on the local machine.
 import.git "agent" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "module/collectors/agent/metric.river"
+  path = "module/collectors/agent/metrics.alloy"
   pull_frequency = "15m"
 }
 

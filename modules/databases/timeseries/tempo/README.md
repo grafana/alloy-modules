@@ -102,7 +102,7 @@ The following example will scrape all Tempo instances in cluster.
 import.git "tempo" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/timeseries/tempo/metrics.river"
+  path = "modules/databases/timeseries/tempo/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +138,7 @@ The following example will scrape Tempo for metrics on the local machine.
 import.git "tempo" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/timeseries/tempo/metrics.river"
+  path = "modules/databases/timeseries/tempo/metrics.alloy"
   pull_frequency = "15m"
 }
 

@@ -102,7 +102,7 @@ The following example will scrape all node_exporter instances in cluster.
 import.git "node_exporter" {
   repository = "https://github.com/node_exporter/agent-modules.git"
   revision = "main"
-  path = "modules/system/node-exporter/metrics.river"
+  path = "modules/system/node-exporter/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +138,7 @@ The following example will scrape node_exporter for metrics on the local machine
 import.git "node_exporter" {
   repository = "https://github.com/node_exporter/agent-modules.git"
   revision = "main"
-  path = "modules/system/node-exporter/metrics.river"
+  path = "modules/system/node-exporter/metrics.alloy"
   pull_frequency = "15m"
 }
 

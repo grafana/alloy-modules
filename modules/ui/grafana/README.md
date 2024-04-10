@@ -102,7 +102,7 @@ The following example will scrape all Grafana instances in cluster.
 import.git "grafana" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/ui/grafana/metrics.river"
+  path = "modules/ui/grafana/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +138,7 @@ The following example will scrape grafana for metrics on the local machine.
 import.git "grafana" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/ui/grafana/metrics.river"
+  path = "modules/ui/grafana/metrics.alloy"
   pull_frequency = "15m"
 }
 

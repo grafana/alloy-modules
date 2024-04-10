@@ -102,7 +102,7 @@ The following example will scrape all pyroscope instances in cluster.
 import.git "pyroscope" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/timeseries/pyroscope/metrics.river"
+  path = "modules/databases/timeseries/pyroscope/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +138,7 @@ The following example will scrape pyroscope for metrics on the local machine.
 import.git "pyroscope" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/timeseries/pyroscope/metrics.river"
+  path = "modules/databases/timeseries/pyroscope/metrics.alloy"
   pull_frequency = "15m"
 }
 

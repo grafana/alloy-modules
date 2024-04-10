@@ -103,7 +103,7 @@ The following example will scrape all rabbitmq instances in cluster.
 import.git "rabbitmq" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/brokers/rabbitmq/metric.river"
+  path = "modules/brokers/rabbitmq/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -139,7 +139,7 @@ The following example will scrape rabbitmq for metrics on the local machine.
 import.git "rabbitmq" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/brokers/rabbitmq/metric.river"
+  path = "modules/brokers/rabbitmq/metrics.alloy"
   pull_frequency = "15m"
 }
 

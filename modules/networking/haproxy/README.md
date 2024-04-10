@@ -102,7 +102,7 @@ The following example will scrape all haproxy instances in cluster.
 import.git "haproxy" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/networking/haproxy/metrics.river"
+  path = "modules/networking/haproxy/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +138,7 @@ The following example will scrape haproxy for metrics on the local machine.
 import.git "haproxy" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/networking/haproxy/metrics.river"
+  path = "modules/networking/haproxy/metrics.alloy"
   pull_frequency = "15m"
 }
 

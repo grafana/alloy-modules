@@ -247,7 +247,7 @@ The following example will scrape all agents in cluster.
 import.git "k8s" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/core/metrics.river"
+  path = "modules/kubernetes/core/metrics.alloy"
   pull_frequency = "15m"
 }
 

@@ -101,7 +101,7 @@ The following example will scrape all Loki instances in cluster.
 import.git "loki" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/timeseries/loki/metrics.river"
+  path = "modules/databases/timeseries/loki/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -137,7 +137,7 @@ The following example will scrape Loki for metrics on the local machine.
 import.git "loki" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/timeseries/loki/metrics.river"
+  path = "modules/databases/timeseries/loki/metrics.alloy"
   pull_frequency = "15m"
 }
 
