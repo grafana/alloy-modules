@@ -290,7 +290,7 @@ The following example will scrape all metric annotation instances in cluster.
 import.git "metric_annotations" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/annotations/metrics.alloy"
+  path = "modules/kubernetes/annotations/metrics.river"
   pull_frequency = "15m"
 }
 
