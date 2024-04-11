@@ -1,0 +1,129 @@
+declare "pre_process_metrics" {
+  argument "keep_labels" {
+    optional = true
+    comment = "List of labels to keep before the metrics are generated"
+    default = [
+      "app",
+      "cluster",
+      "component",
+      "env",
+      "level",
+      "namespace",
+      "region",
+      "service",
+      "squad",
+      "team",
+      "workload",
+    ]
+  }
+
+  argument "prefix" {
+    comment = "the suffix to use with the metric names (default: log_)"
+    optional = true
+    default = "log_"
+  }
+
+  argument "suffix" {
+    comment = "the suffix to use with the metric names (default: _pre_total)"
+    optional = true
+    default = "_pre_total"
+  }
+
+  export "receiver" {
+    value = loki.process.pre_process_metrics.receiver
+  }
+
+  loki.process "pre_process_metrics" {
+    forward_to = argument.forward_to.value
+
+    stage.label_keep {
+      values = argument.keep_labels.value
+    }
+
+    stage.metrics {
+      metric.counter {
+        name = "lines" + argument.suffix.value
+        description = "total number of log lines ingested before processing"
+        prefix = argument.prefix.value
+        match_all = true
+        action = "inc"
+        max_idle_duration = "24h"
+      }
+    }
+
+    stage.metrics {
+        metric.counter {
+          name = "bytes" + argument.suffix.value
+        description = "total number of log bytes ingested before processing"
+          prefix = argument.prefix.value
+          match_all = true
+          count_entry_bytes = true
+          action = "add"
+          max_idle_duration = "24h"
+        }
+    }
+  }
+}
+
+declare "post_process_metrics" {
+  argument "keep_labels" {
+    optional = true
+    comment = "List of labels to keep before the metrics are generated"
+    default = [
+      "app",
+      "cluster",
+      "component",
+      "env",
+      "level",
+      "namespace",
+      "region",
+      "service",
+      "squad",
+      "team",
+      "workload",
+    ]
+  }
+
+  argument "prefix" {
+    comment = "the suffix to use with the metric names (default: log_)"
+    optional = true
+    default = "log_"
+  }
+
+  argument "suffix" {
+    comment = "the suffix to use with the metric names (default: _total)"
+    optional = true
+    default = "_total"
+  }
+
+  export "receiver" {
+    value = loki.process.post_process_metrics.receiver
+  }
+
+  loki.process "post_process_metrics" {
+    forward_to = argument.forward_to.value
+
+    stage.metrics {
+      metric.counter {
+        name = "lines" + argument.suffix.value
+        description = "total number of log lines ingested before processing"
+        prefix = argument.prefix.value
+        match_all = true
+        action = "inc"
+        max_idle_duration = "24h"
+      }
+    }
+
+    stage.metrics {
+        metric.counter {
+          name = "bytes" + argument.suffix.value
+        description = "total number of log bytes ingested before processing"
+          prefix = argument.prefix.value
+          match_all = true
+          count_entry_bytes = true
+          action = "add"
+          max_idle_duration = "24h"
+        }
+    }
+  }
+}
