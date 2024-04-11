@@ -34,7 +34,7 @@ declare "pre_process_metrics" {
   }
 
   loki.process "pre_process_metrics" {
-    forward_to = argument.forward_to.value
+    forward_to = []
 
     stage.label_keep {
       values = argument.keep_labels.value
@@ -101,7 +101,7 @@ declare "post_process_metrics" {
   }
 
   loki.process "post_process_metrics" {
-    forward_to = argument.forward_to.value
+    forward_to = []
 
     stage.metrics {
       metric.counter {
