@@ -1,0 +1,11 @@
+# chart/templates/configmaps.yaml
+{{- range $path, $_ :=  .Files.Glob  "configmaps/*" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $path | trimPrefix "configmaps/" | trimSuffix ".alloy" }}
+data:
+  {{ $path | trimPrefix "configmaps/" }}: |-
+{{ $.Files.Get $path| indent 4 }}
+---
+  {{ end }}
