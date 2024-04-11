@@ -1,11 +1,11 @@
-# Kubernetes Annotation Metric Module
+# Kubernetes Metric Annotation Module
 
 **Modules:**
 
--   [`metrics.river`](#metricsriver)
--   [`probes.river`](#probesriver)
+-   [`metrics.alloy`](#metricsalloy)
+-   [`probes.alloy`](#probesalloy)
 
-## `metrics.river`
+## `metrics.alloy`
 
 This module is meant to be used to automatically scrape targets based on a certain role and set of annotations.  This module can be consumed
 multiple times with different roles.  The supported roles are:
@@ -143,8 +143,8 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
+| `keep_metrics`    | _no_     | [see code](module.alloy#L228) | A regular expression of metrics to keep                                                                                                             |
+| `drop_metrics`    | _no_     | [see code](module.alloy#L235) | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
 | `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                  |
 | `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -156,7 +156,7 @@ N/A
 
 ---
 
-## `probes.river`
+## `probes.alloy`
 
 This module is meant to be used to automatically scrape targets based on a certain role and set of annotations.  This module can be consumed
 multiple times with different roles.  The supported roles are:
@@ -267,8 +267,8 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
+| `keep_metrics`    | _no_     | [see code](module.alloy#L228) | A regular expression of metrics to keep                                                                                                             |
+| `drop_metrics`    | _no_     | [see code](module.alloy#L235) | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
 | `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                  |
 | `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -286,11 +286,11 @@ N/A
 
 The following example will scrape all metric annotation instances in cluster.
 
-```river
+```alloy
 import.git "metric_annotations" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/annotations/metrics.river"
+  path = "modules/kubernetes/annotations/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -324,11 +324,11 @@ prometheus.remote_write "local" {
 
 The following example will scrape all probe annotation instances in cluster.
 
-```river
+```alloy
 import.git "probe_annotations" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/annotations/probes.river"
+  path = "modules/kubernetes/annotations/probes.alloy"
   pull_frequency = "15m"
 }
 
