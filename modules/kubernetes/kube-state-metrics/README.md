@@ -13,11 +13,12 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                                         | Description                                                                 |
-| :----------- | :------- | :---------------------------------------------- | :-------------------------------------------------------------------------- |
-| `namespaces` | _no_     | `[]`                                            | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=kube-state-metrics"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `http-metrics`                                  | The of the port to scrape metrics from                                      |
+| Name              | Required | Default                                         | Description                                                                                                                               |
+| :---------------- | :------- | :---------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespaces`      | _no_     | `[]`                                            | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                               |
+| `field_selectors` | _no_     | `[]`                                            | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets |
+| `label_selectors` | _no_     | `["app.kubernetes.io/name=kube-state-metrics"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
+| `port_name`       | _no_     | `http-metrics`                                  | The of the port to scrape metrics from                                                                                                    |
 
 #### Exports
 
@@ -70,7 +71,7 @@ The following example will scrape all kube-state-metrics in cluster.
 import.git "ksm" {
   repository = "https://github.com/grafana/ksm-modules.git"
   revision = "main"
-  path = "modules/kubernetes/kube-state-metrics/metrics.river"
+  path = "modules/kubernetes/kube-state-metrics/metrics.alloy"
   pull_frequency = "15m"
 }
 

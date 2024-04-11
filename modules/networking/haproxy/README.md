@@ -14,11 +14,12 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                              | Description                                                                 |
-| :----------- | :------- | :----------------------------------- | :-------------------------------------------------------------------------- |
-| `namespaces` | _no_     | `[]`                                 | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=haproxy"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `prometheus`                         | The of the port to scrape metrics from                                      |
+| Name              | Required | Default                              | Description                                                                                                                               |
+| :---------------- | :------- | :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespaces`      | _no_     | `[]`                                 | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                               |
+| `field_selectors` | _no_     | `[]`                                 | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets |
+| `label_selectors` | _no_     | `["app.kubernetes.io/name=haproxy"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
+| `port_name`       | _no_     | `prometheus`                         | The of the port to scrape metrics from                                                                                                    |
 
 #### Exports
 
@@ -102,7 +103,7 @@ The following example will scrape all haproxy instances in cluster.
 import.git "haproxy" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/networking/haproxy/metrics.river"
+  path = "modules/networking/haproxy/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -138,7 +139,7 @@ The following example will scrape haproxy for metrics on the local machine.
 import.git "haproxy" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/networking/haproxy/metrics.river"
+  path = "modules/networking/haproxy/metrics.alloy"
   pull_frequency = "15m"
 }
 
