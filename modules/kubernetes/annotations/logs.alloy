@@ -84,8 +84,8 @@ declare "drop_levels" {
   }
 
   argument "info_level" {
-    comment = "The regular expression to use to match info logs level label value (default: (?i)(info?+))"
-    default = "(?i)(info?+)"
+    comment = "The regular expression to use to match info logs level label value (default: (?i)(info?))"
+    default = "(?i)(info?)"
     optional = true
   }
 
