@@ -1,5 +1,5 @@
 
-declare "kubernetes" {
+declare "pods" {
   // arguments for kubernetes discovery
   argument "namespaces" {
     comment = "The namespaces to look for targets in (default: [\"kube-system\"] is all namespaces)"
