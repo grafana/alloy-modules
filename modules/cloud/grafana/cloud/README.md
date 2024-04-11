@@ -46,15 +46,15 @@ The token must have permissions to read stack information. The setup of these pe
 
 ```river
 import.git "grafana_cloud" {
-  repository = "https://github.com/grafana/flow-modules.git"
+  repository = "https://github.com/grafana/alloy-modules.git"
   revision = "main"
-  path = "modules/cloud/grafana.river"
+  path = "modules/cloud/grafana/cloud/module.river"
   pull_frequency = "15m"
 }
 
 // get the receivers
 grafana_cloud.stack "receivers" {
-  stack = "DashyMcDashFace"
+  stack_name = "DashyMcDashFace"
   token = "XXXXXXXXXXXXX"
 }
 
