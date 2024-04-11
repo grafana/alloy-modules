@@ -4,6 +4,8 @@ name: HelmChartValuesBuilder
 on:
   pull_request:
     branches: ["main"]
+  push:
+    branches: ["main"]
 
 jobs:
   build:
@@ -12,18 +14,8 @@ jobs:
       - name: checkout repo contents
         uses: actions/checkout@v2
 
-      - name: setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: install python packages
-        run: |
-          python -m pip install --upgrade pip
-          pip install - requirements.txt
-
-      - name: execute py script
-        run: python ./tools/generate_values.py
+      - name: execute shell script
+        run: ./tools/create-helm-config-files.sh
 
       - name: commit files
         run: |
