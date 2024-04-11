@@ -14,11 +14,12 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                                | Description                                                                 |
-| :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
-| `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/component=etcd"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `metrics`                              | The of the port to scrape metrics from                                      |
+| Name              | Required | Default                                | Description                                                                                                                               |
+| :---------------- | :------- | :------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespaces`      | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                               |
+| `field_selectors` | _no_     | `[]`                                   | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets |
+| `label_selectors` | _no_     | `["app.kubernetes.io/component=etcd"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
+| `port_name`       | _no_     | `metrics`                              | The of the port to scrape metrics from                                                                                                    |
 
 #### Exports
 
@@ -101,7 +102,7 @@ The following example will scrape all etcd instances in cluster.
 import.git "etcd" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/kv/etcd/metrics.river"
+  path = "modules/databases/kv/etcd/metrics.alloy"
   pull_frequency = "15m"
 }
 
@@ -137,7 +138,7 @@ The following example will scrape etcd for metrics on the local machine.
 import.git "etcd" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/databases/kv/etcd/metrics.river"
+  path = "modules/databases/kv/etcd/metrics.alloy"
   pull_frequency = "15m"
 }
 

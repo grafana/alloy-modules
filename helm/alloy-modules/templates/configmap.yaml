@@ -1,5 +1,9 @@
 # chart/templates/configmaps.yaml
+<<<<<<< HEAD
 {{- range $path, $_ :=  .Files.Glob  "configmaps/*.alloy" }}
+=======
+{{- range $path, $_ :=  .Files.Glob  "configmaps/*" }}
+>>>>>>> 311dae129bf4687b2810e743cc8163ec0bec1cab
 apiVersion: v1
 kind: ConfigMap
 metadata:

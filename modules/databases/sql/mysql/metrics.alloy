@@ -1,6 +1,6 @@
 /*
-Module: job-pyroscope
-Description: Scrapes pyroscope
+Module: job-mysql
+Description: Scrapes mysql
 
 Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
@@ -22,23 +22,23 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=pyroscope\"])"
+    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=prometheus-mysql-exporter\"])"
     optional = true
   }
 
   argument "port_name" {
-    comment = "The of the port to scrape metrics from (default: http-metrics)"
+    comment = "The of the port to scrape metrics from (default: mysql-exporter)"
     optional = true
   }
 
-  // pyroscope service discovery for all of the pods
-  discovery.kubernetes "pyroscope" {
+  // mysql service discovery for all of the pods
+  discovery.kubernetes "mysql" {
     role = "pod"
 
     selectors {
       role = "pod"
-      field = join(coalesce(argument.fieldselectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=pyroscope"]), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=prometheus-mysql-exporter"]), ",")
     }
 
     namespaces {
@@ -46,9 +46,9 @@ declare "kubernetes" {
     }
   }
 
-  // pyroscope relabelings (pre-scrape)
+  // mysql relabelings (pre-scrape)
   discovery.relabel "kubernetes" {
-    targets = discovery.kubernetes.pyroscope.targets
+    targets = discovery.kubernetes.mysql.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
@@ -59,7 +59,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "http-metrics") + "@Running@true@false"
+      regex = coalesce(argument.port_name.value, "mysql-exporter") + "@Running@true@false"
       action = "keep"
     }
 
@@ -140,7 +140,7 @@ declare "kubernetes" {
 declare "local" {
 
   argument "port_name" {
-    comment = "The port to use (default: 4040)"
+    comment = "The port to use (default: 9104)"
     optional = true
   }
 
@@ -148,7 +148,7 @@ declare "local" {
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "4040")),
+        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "9104")),
         "source" = "local",
       },
     ]
@@ -169,7 +169,7 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all pyroscope metric (default: integrations/pyroscope)"
+    comment = "The job label to add for all mysql metric (default: integrations/mysql)"
     optional = true
   }
 
@@ -204,10 +204,10 @@ declare "scrape" {
     optional = true
   }
 
-  // pyroscope scrape job
-  prometheus.scrape "pyroscope" {
-    job_name = coalesce(argument.job_label.value, "integrations/pyroscope")
-    forward_to = [prometheus.relabel.pyroscope.receiver]
+  // mysql scrape job
+  prometheus.scrape "mysql" {
+    job_name = coalesce(argument.job_label.value, "integrations/mysql")
+    forward_to = [prometheus.relabel.mysql.receiver]
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
@@ -217,36 +217,23 @@ declare "scrape" {
     }
   }
 
-  // pyroscope metric relabelings (post-scrape)
-  prometheus.relabel "pyroscope" {
+  // mysql metric relabelings (post-scrape)
+  prometheus.relabel "mysql" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
     // drop metrics that match the drop_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      regex = coalesce(argument.drop_metrics.value, "(^(go)_.+$)")
       action = "drop"
     }
 
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(.+)")
+      regex = coalesce(argument.keep_metrics.value, "(mysql_(global_status_(aborted_(clients|connects)|buffer_pool_pages|bytes_(received|sent)|commands_total|created_tmp_(disk_tables|files|tables)|handlers_total|innodb_(log_waits|mem_(adaptive_hash|dictionary)|num_open_files|page_size)|max_used_connections|open_(files|table_definitions|tables)|opened_(files|table_definitions|tables)|qcache_(free_memory|hits|inserts|lowmem_prunes|not_cached|queries_in_cache)|queries|questions|select_(full_(join|range_join)|range(|_check)|scan)|slow_queries|sort_(merge_passes|range|rows|scan)|table_locks_(immediate|waited)|table_open_cache_(hits|misses|overflows)|threads_(cached|connected|created|running)|uptime|wsrep_(local_(recv_queue|state)|ready))|global_variables_(innodb_(additional_mem_pool_size|buffer_pool_size|log_buffer_size)|key_buffer_size|max_connections|open_files_limit|query_cache_size|table_(definition_cache|open_cache)|thread_cache_size|tokudb_cache_size|wsrep_desync)|heartbeat_(now|stored)_timestamp_seconds|info_schema_processlist_threads|slave_status_(seconds_behind_master|slave_(io|sql)_running|sql_delay)|up))")
       action = "keep"
-    }
-
-    // set the job label to be namespace/pod as this is what the cloud integration expects
-    rule {
-      action = "replace"
-      source_labels = [
-        "namespace",
-        "workload",
-      ]
-      separator = "/"
-      regex = "(.+)/.+/(.+)"
-      replacement = "$1/$2"
-      target_label = "job"
     }
   }
 }
