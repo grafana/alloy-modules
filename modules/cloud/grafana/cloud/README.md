@@ -1,5 +1,10 @@
 # Grafana Cloud Auto-Configuration Module
 
+> [!WARNING]
+> Currently, the Pyroscope functionality in this module is under the `public-preview` stability level. As such, to use this module, you will need to pass `--stability.level=public-preview` to your `alloy run` command.
+>
+> See the docs for [`pyroscope.write`](https://grafana.com/docs/alloy/latest/reference/components/pyroscope.write/) and [Grafana Labs' Release Lifecycle](https://grafana.com/docs/release-life-cycle/) for more info on this.
+
 Module to interact with Grafana Cloud.
 
 ## Components
