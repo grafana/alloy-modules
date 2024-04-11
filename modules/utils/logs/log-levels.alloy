@@ -1,4 +1,4 @@
-declare "level_default" {
+declare "default_level" {
   argument "forward_to" {
     comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   }
@@ -131,7 +131,7 @@ declare "level_default" {
   }
 }
 
-declare "level_normalize" {
+declare "normalize_level" {
   argument "forward_to" {
     comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   }
