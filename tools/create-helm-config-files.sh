@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Source directory where the .alloy files are located
-SOURCE_DIR="../modules"
+SOURCE_DIR="/modules"
 
 # Destination directory where you want to copy the .alloy files
-DEST_DIR="../helm/alloy-modules/configmaps"
+DEST_DIR="/helm/alloy-modules/configmaps"
 
 # Delete all files in destination directory
 rm "$DEST_DIR"/*
