@@ -14,7 +14,7 @@ declare "default_level" {
   }
 
   loki.process "level_default" {
-    forward_to  = argument.forward_to.value
+    forward_to = argument.forward_to.value
 
     /*******************************************************************************
     *                         Log-Level Parsing
@@ -147,7 +147,7 @@ declare "normalize_level" {
   }
 
   loki.process "level_normalize" {
-    forward_to  = argument.forward_to.value
+    forward_to = argument.forward_to.value
 
     /*******************************************************************************
     *                         Log-Level Normalization

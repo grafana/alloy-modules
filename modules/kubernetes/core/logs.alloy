@@ -77,7 +77,7 @@ declare "from_worker" {
 
   // parse the log based on the container runtime
   loki.process "parse" {
-    forward_to  = argument.forward_to.value
+    forward_to = argument.forward_to.value
     /*******************************************************************************
      *                         Container Runtime Parsing
      ********************************************************************************/
