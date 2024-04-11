@@ -15,6 +15,7 @@ declare "local" {
 		optional 	= true
   }
 
+  // issue with escape characters when specifying windows paths, this argument currently does nothing.
   argument "textfile_directory" {
 		comment		= "The directory containing the files to be ingested."
 		optional	= true
