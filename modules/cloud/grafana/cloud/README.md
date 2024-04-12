@@ -50,10 +50,10 @@ The token must have permissions to read stack information. The setup of these pe
 ### `stack`
 
 ```river
-module.git "grafana_cloud" {
+import.git "grafana_cloud" {
   repository = "https://github.com/grafana/alloy-modules.git"
   revision = "main"
-  path = "modules/cloud/grafana/cloud/module.river"
+  path = "modules/cloud/grafana/cloud/module.alloy"
   pull_frequency = "15m"
 }
 
