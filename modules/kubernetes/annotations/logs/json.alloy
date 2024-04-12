@@ -12,7 +12,7 @@ declare "json_scrub_empties" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -78,7 +78,7 @@ declare "json_scrub_nulls" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"

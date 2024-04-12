@@ -116,9 +116,9 @@ declare "default_level" {
     stage.match {
       selector = "{level=\"" + argument.default_level.value + "\"}"
 
-      // unescaped regex: (?i)(?:"(?:level|loglevel|levelname|lvl|SeverityText)":\s*"|\s*(?:level|loglevel|lvl)="?|\s+\[?)(?P<level>(DEBUG?|DBG|INFO?|WA?RN(ING)?|ERR(OR)?|CRI?T(ICAL)?|FATAL|FTL|NOTICE|TRACE|TRC|PANIC|PNC|ALERT|EMERGENCY))("|\s+|-|\s*\])
+      // unescaped regex: (?i)(?:"(?:level|loglevel|levelname|lvl|levelText|SeverityText)":\s*"|\s*(?:level|loglevel|levelText|lvl)="?|\s+\[?)(?P<level>(DEBUG?|DBG|INFO?(RMATION)?|WA?RN(ING)?|ERR(OR)?|CRI?T(ICAL)?|FATAL|FTL|NOTICE|TRACE|TRC|PANIC|PNC|ALERT|EMERGENCY))("|\s+|-|\s*\])
       stage.regex {
-        expression = "(?i)(?:\"(?:level|loglevel|levelname|lvl|SeverityText)\":\\s*\"|\\s*(?:level|loglevel|lvl)=\"?|\\s+\\[?)(?P<level>(DEBUG?|DBG|INFO?|WA?RN(ING)?|ERR(OR)?|CRI?T(ICAL)?|FATAL|FTL|NOTICE|TRACE|TRC|PANIC|PNC|ALERT|EMERGENCY))(\"|\\s+|-|\\s*\\])"
+        expression = "(?i)(?:\"(?:level|loglevel|levelname|lvl|levelText|SeverityText)\":\\s*\"|\\s*(?:level|loglevel|levelText|lvl)=\"?|\\s+\\[?)(?P<level>(DEBUG?|DBG|INFO?(RMATION)?|WA?RN(ING)?|ERR(OR)?|CRI?T(ICAL)?|FATAL|FTL|NOTICE|TRACE|TRC|PANIC|PNC|ALERT|EMERGENCY))(\"|\\s+|-|\\s*\\])"
       }
 
       // set the extracted level to be a label

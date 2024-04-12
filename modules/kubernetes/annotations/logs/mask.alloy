@@ -10,7 +10,7 @@ declare "mask_luhn" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -70,7 +70,7 @@ declare "mask_credit_card" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -131,7 +131,7 @@ declare "mask_email" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -186,7 +186,7 @@ declare "mask_ipv4" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -241,7 +241,7 @@ declare "mask_ipv6" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -296,7 +296,7 @@ declare "mask_phone" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"
@@ -351,7 +351,7 @@ declare "mask_ssn" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, This component should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: logs.grafana.com)"
     default = "logs.grafana.com"

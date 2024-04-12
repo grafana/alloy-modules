@@ -26,7 +26,7 @@ declare "pods" {
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
     // i.e. metrics.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: metrics.grafana.com)"
     default = "logs.grafana.com"
