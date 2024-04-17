@@ -121,7 +121,7 @@ declare "scrape" {
   prometheus.scrape "kube_state_metrics" {
     job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube-state-metrics")
     forward_to = [prometheus.relabel.kube_state_metrics.receiver]
-    targets = [argument.targets]
+    targets = argument.targets
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
 
