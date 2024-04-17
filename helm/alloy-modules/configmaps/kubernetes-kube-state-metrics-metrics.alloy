@@ -50,7 +50,7 @@ declare "kubernetes" {
 
   // kube-state-metrics relabelings (pre-scrape)
   discovery.relabel "ksm" {
-    targets = discovery.kubernetes.kube_state_metrics.targets
+    targets = discovery.kubernetes.ksm.targets
 
     // only keep targets with a matching port name
     rule {
