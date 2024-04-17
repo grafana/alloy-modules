@@ -1,0 +1,178 @@
+/*
+Module: job-windows-exporter
+Description: Integrates and Scrapes Windows Exporter Metrics utilized in the Windows Integration in Grafana Cloud
+*/
+
+declare "local" {
+  argument "collectors" {
+		comment 	= "The collectors to enable for the windows exporter integration"
+		optional 	= true
+  }
+
+  argument "timeout" {
+		comment		= "Timeout for collecting metrics. Default is 4m"
+		optional 	= true
+  }
+
+  argument "textfile_directory" {
+		comment		= "The directory containing the files to be ingested."
+		optional	= true
+  }
+
+  argument "iis_app_exclude" {
+		comment		= "Regular expression of applications to ignore."
+		optional	= true
+  }
+
+  argument "iis_app_include" {
+		comment		= "Regular expression of applications to report on."
+		optional    = true
+  }
+
+  argument "iis_site_exclude" {
+		comment		= "Regular expression of sites to ignore"
+		optional 	= true
+  }
+
+  argument "iis_site_include" {
+		comment		= "Regular expression of sites to report on."
+		optional	= true
+  }
+
+	argument "logical_disk_exclude" {
+		comment		= "Regular expression of volumes to exclude"
+		optional	= true
+	}
+
+	argument "logical_disk_include" {
+		comment 	= "Regular expression of volumes to include"
+		optional 	= true
+	}
+
+	argument "process_exclude" {
+		comment		= "Regular expression of processes to exclude"
+		optional 	= true
+	}
+
+	argument "process_include" {
+		comment		= "Regular expression of processes to include"
+		optional 	= true
+	}
+
+	argument "service_wql_where_clause" {
+		comment		= ""
+		optional  = true
+	}
+
+  prometheus.exporter.windows "local" {
+		enabled_collectors 	= coalesce(argument.collectors.value, ["cpu", "cs", "logical_disk", "net", "os", "system", "textfile", "time", "diskdrive"])
+
+		iis {
+			app_exclude 	= coalesce(argument.iis_app_exclude.value, "")
+			app_include 	= coalesce(argument.iis_app_include.value, ".*")
+			site_exclude 	= coalesce(argument.iis_site_exclude.value, "")
+			site_include 	= coalesce(argument.iis_site_include.value, ".*")
+		}
+
+		logical_disk {
+			exclude = coalesce(argument.logical_disk_exclude.value, "")
+			include = coalesce(argument.logical_disk_include.value, ".+")
+		}
+
+		process {
+			exclude = coalesce(argument.process_exclude.value, "")
+			include = coalesce(argument.process_include.value, ".*")
+		}
+
+		service {
+			where_clause = coalesce(argument.service_wql_where_clause.value, "")
+		}
+
+  }
+
+	export "output" {
+		value = prometheus.exporter.windows.local.targets
+	}
+}
+
+declare "scrape" {
+  argument "targets" {
+    comment = "Must be a list() of targets"
+  }
+
+  argument "forward_to" {
+    comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "job_label" {
+    comment = "The job label to add for all windows_exporter metric (default: integrations/windows_exporter)"
+		default = "integrations/windows_exporter"
+    optional = true
+  }
+
+  argument "keep_metrics" {
+    comment = "A regular expression of metrics to keep (default: see below)"
+    optional = true
+  }
+
+  argument "drop_metrics" {
+    comment = "A regular expression of metrics to drop (default: see below)"
+    optional = true
+  }
+
+  argument "scrape_interval" {
+    comment = "How often to scrape metrics from the targets (default: 60s)"
+    optional = true
+  }
+
+  argument "scrape_timeout" {
+    comment = "How long before a scrape times out (default: 10s)"
+    optional = true
+  }
+
+  argument "max_cache_size" {
+    comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
+    optional = true
+  }
+
+  argument "clustering" {
+    // Docs: https://node_exporter.com/docs/agent/latest/flow/concepts/clustering/
+    comment = "Whether or not clustering should be enabled (default: false)"
+    optional = true
+  }
+
+  prometheus.scrape "windows_exporter" {
+		job_name 				= coalesce(argument.job_label.value, "integrations/windows_exporter")
+		forward_to 			= [prometheus.relabel.windows_exporter.receiver]
+		targets					= argument.targets.value
+		scrape_interval = coalesce(argument.scrape_interval.value, "60s")
+		scrape_timeout	= coalesce(argument.scrape_timeout.value, "10s")
+
+		clustering {
+			enabled = coalesce(argument.clustering.value, false)
+		}
+  }
+
+  prometheus.relabel "windows_exporter" {
+		forward_to 			= argument.forward_to.value
+		max_cache_size 	= coalesce(argument.max_cache_size.value, 100000)
+
+    rule {
+      source_labels = ["__name__"]
+      regex 				= coalesce(argument.drop_metrics.value, "(^(go)_.+$)")
+      action 				= "drop"
+    }
+
+		rule {
+			action 				= "keep"
+			regex  				= coalesce(argument.keep_metrics.value, "(up|windows_cpu_interrupts_total|windows_cpu_time_total|windows_cs_hostname|windows_cs_logical_processors|windows_cs_physical_memory_bytes|windows_disk_drive_status|windows_logical_disk_avg_read_requests_queued|windows_logical_disk_avg_write_requests_queued|windows_logical_disk_free_bytes|windows_logical_disk_idle_seconds_total|windows_logical_disk_read_bytes_total|windows_logical_disk_read_seconds_total|windows_logical_disk_reads_total|windows_logical_disk_size_bytes|windows_logical_disk_write_bytes_total|windows_logical_disk_write_seconds_total|windows_logical_disk_writes_total|windows_net_bytes_received_total|windows_net_bytes_sent_total|windows_net_packets_outbound_discarded_total|windows_net_packets_outbound_errors_total|windows_net_packets_received_discarded_total|windows_net_packets_received_errors_total|windows_net_packets_received_unknown_total|windows_os_info|windows_os_paging_limit_bytes|windows_os_physical_memory_free_bytes|windows_os_timezone|windows_service_status|windows_system_context_switches_total|windows_system_processor_queue_length|windows_system_system_up_time|windows_time_computed_time_offset_seconds|windows_time_ntp_round_trip_delay_seconds)")
+			source_labels = ["__name__"]
+		}
+
+		rule {
+			action 				= "replace"
+			target_label  = "job"
+			replacement		= argument.job_label.value
+		}
+  }
+}
