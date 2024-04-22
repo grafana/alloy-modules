@@ -13,11 +13,12 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                                   | Description                                                                 |
-| :----------- | :------- | :---------------------------------------- | :-------------------------------------------------------------------------- |
-| `namespaces` | _no_     | `[]`                                      | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=cert-manager"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `http-metrics`                            | The of the port to scrape metrics from                                      |
+| Name              | Required | Default                                   | Description                                                                                                                               |
+| :---------------- | :------- | :---------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespaces`      | _no_     | `[]`                                      | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                               |
+| `field_selectors` | _no_     | `[]`                                      | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets |
+| `label_selectors` | _no_     | `["app.kubernetes.io/name=cert-manager"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
+| `port_name`       | _no_     | `http-metrics`                            | The of the port to scrape metrics from                                                                                                    |
 
 #### Exports
 
@@ -49,7 +50,7 @@ The following labels are automatically added to exported targets.
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
 | `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/cert-manager`   | The job label to add for all metrics                                                                                                           |
+| `job_label`       | _no_     | `integrations/cert-manager`   | The job label to add for all metrics                                                                                                                |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
@@ -61,8 +62,8 @@ The following labels are automatically added to exported targets.
 
 The following labels are automatically added to exported targets.
 
-| Label | Description |
-| :---- | :-----------|
+| Label | Description                                    |
+| :---- | :--------------------------------------------- |
 | `job` | Set to the value of `argument.job_label.value` |
 
 ---
@@ -77,7 +78,7 @@ The following example will scrape all cert_manager instances in cluster.
 import.git "cert_manager" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "modules/kubernetes/cert-manager/metrics.river"
+  path = "modules/kubernetes/cert-manager/metrics.alloy"
   pull_frequency = "15m"
 }
 

@@ -1,6 +1,6 @@
 /*
-Module: job-haproxy
-Description: Scrapes haproxy
+Module: job-mimir
+Description: Scrapes mimir
 
 Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
@@ -22,23 +22,23 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/component=haproxy\"])"
+    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=mimir\"])"
     optional = true
   }
 
   argument "port_name" {
-    comment = "The of the port to scrape metrics from (default: prometheus)"
+    comment = "The of the port to scrape metrics from (default: http-metrics)"
     optional = true
   }
 
-  // haproxy service discovery for all of the pods
-  discovery.kubernetes "haproxy" {
+  // mimir service discovery for all of the pods
+  discovery.kubernetes "mimir" {
     role = "pod"
 
     selectors {
       role = "pod"
-      field = join(coalesce(argument.fieldselectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/component=haproxy"]), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=mimir"]), ",")
     }
 
     namespaces {
@@ -46,9 +46,9 @@ declare "kubernetes" {
     }
   }
 
-  // haproxy relabelings (pre-scrape)
+  // mimir relabelings (pre-scrape)
   discovery.relabel "kubernetes" {
-    targets = discovery.kubernetes.haproxy.targets
+    targets = discovery.kubernetes.mimir.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
@@ -59,7 +59,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "prometheus") + "@Running@true@false"
+      regex = coalesce(argument.port_name.value, "http-metrics") + "@Running@true@false"
       action = "keep"
     }
 
@@ -138,8 +138,9 @@ declare "kubernetes" {
 }
 
 declare "local" {
-  argument "port" {
-    comment = "The port to use (default: 8405)"
+
+  argument "port_name" {
+    comment = "The port to use (default: 8080)"
     optional = true
   }
 
@@ -147,7 +148,7 @@ declare "local" {
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "8405")),
+        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "8080")),
         "source" = "local",
       },
     ]
@@ -168,7 +169,7 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all haproxy metric (default: integrations/haproxy)"
+    comment = "The job label to add for all metrics (default: integrations/mimir)"
     optional = true
   }
 
@@ -203,10 +204,10 @@ declare "scrape" {
     optional = true
   }
 
-  // haproxy scrape job
-  prometheus.scrape "haproxy" {
-    job_name = coalesce(argument.job_label.value, "integrations/haproxy")
-    forward_to = [prometheus.relabel.haproxy.receiver]
+  // mimir scrape job
+  prometheus.scrape "mimir" {
+    job_name = coalesce(argument.job_label.value, "integrations/mimir")
+    forward_to = [prometheus.relabel.mimir.receiver]
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
@@ -216,8 +217,8 @@ declare "scrape" {
     }
   }
 
-  // haproxy metric relabelings (post-scrape)
-  prometheus.relabel "haproxy" {
+  // mimir metric relabelings (post-scrape)
+  prometheus.relabel "mimir" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
@@ -231,8 +232,21 @@ declare "scrape" {
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(up|haproxy_(blocked_clients|cluster_slots_(fail|pfail)|cluster_state|commands_(duration_seconds_total|total)|connected_(clients|slaves)|db_keys(_expiring)?|evicted_keys_total|keyspace_(hits|misses)_total|master_last_io_seconds_ago|memory_(fragmentation_ratio|max_bytes|used_(bytes|rss_bytes))|total_system_memory_bytes|up))")
+      regex = coalesce(argument.keep_metrics.value, "(.+)")
       action = "keep"
+    }
+
+    // set the job label to be namespace/pod as this is what the cloud integration expects
+    rule {
+      action = "replace"
+      source_labels = [
+        "namespace",
+        "workload",
+      ]
+      separator = "/"
+      regex = "(.+)/.+/(.+)"
+      replacement = "$1/$2"
+      target_label = "job"
     }
   }
 }

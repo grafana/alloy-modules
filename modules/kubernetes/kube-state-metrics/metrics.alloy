@@ -1,6 +1,8 @@
 /*
-Module: job-gitlab
-Description: Scrapes gitlab
+Module: job-kube-state-metrics
+Description: Scrapes Kube-State-Metrics, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
+             disable kube-state-metrics from being scraped by this module and annotations by setting the following annotation on the kube-state-metrics
+             metrics.agent.grafana.com/scrape: "false"
 
 Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
@@ -22,7 +24,7 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=gitlab-ci-pipelines-exporter\"])"
+    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=kube-state-metrics\"])"
     optional = true
   }
 
@@ -31,14 +33,14 @@ declare "kubernetes" {
     optional = true
   }
 
-  // gitlab service discovery for all of the pods
-  discovery.kubernetes "gitlab" {
+  // kube state metrics service discovery for all of the pods
+  discovery.kubernetes "ksm" {
     role = "service"
 
     selectors {
       role = "service"
-      field = join(coalesce(argument.fieldselectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=gitlab-ci-pipelines-exporter"]), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=kube-state-metrics"]), ",")
     }
 
     namespaces {
@@ -46,54 +48,15 @@ declare "kubernetes" {
     }
   }
 
-  // gitlab relabelings (pre-scrape)
-  discovery.relabel "kubernetes" {
-    targets = discovery.kubernetes.gitlab.targets
+  // kube-state-metrics relabelings (pre-scrape)
+  discovery.relabel "ksm" {
+    targets = discovery.kubernetes.ksm.targets
 
-    // keep only the specified metrics port name, and pods that are Running and ready
+    // only keep targets with a matching port name
     rule {
       source_labels = ["__meta_kubernetes_service_port_name"]
       regex = coalesce(argument.port_name.value, "http")
       action = "keep"
-    }
-
-    // set the namespace label
-    rule {
-      source_labels = ["__meta_kubernetes_namespace"]
-      target_label  = "namespace"
-    }
-
-    // set the pod label
-    rule {
-      source_labels = ["__meta_kubernetes_service_name"]
-      target_label  = "service"
-    }
-
-    // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"
-    rule {
-      action = "replace"
-      source_labels = [
-        "__meta_kubernetes_service_label_app_kubernetes_io_name",
-        "__meta_kubernetes_service_label_k8s_app",
-        "__meta_kubernetes_service_label_app",
-      ]
-      separator = ";"
-      regex = "^(?:;*)?([^;]+).*$"
-      replacement = "$1"
-      target_label = "app"
-    }
-
-    // set the component if specified as metadata labels "component:" or "app.kubernetes.io/component:" or "k8s-component:"
-    rule {
-      action = "replace"
-      source_labels = [
-        "__meta_kubernetes_service_label_app_kubernetes_io_component",
-        "__meta_kubernetes_service_label_k8s_component",
-        "__meta_kubernetes_service_label_component",
-      ]
-      regex = "^(?:;*)?([^;]+).*$"
-      replacement = "$1"
-      target_label = "component"
     }
 
     // set a source label
@@ -105,28 +68,7 @@ declare "kubernetes" {
   }
 
   export "output" {
-    value = discovery.relabel.kubernetes.output
-  }
-}
-
-declare "local" {
-  argument "port" {
-    comment = "The port to use (default: 9150)"
-    optional = true
-  }
-
-  // arguments for local (static)
-  discovery.relabel "local" {
-    targets = [
-      {
-        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "9168")),
-        "source" = "local",
-      },
-    ]
-  }
-
-  export "output" {
-    value = discovery.relabel.local.output
+    value = discovery.relabel.ksm.output
   }
 }
 
@@ -140,7 +82,7 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all gitlab metric (default: integrations/gitlab)"
+    comment = "The job label to add for all kube-kube_state_metrics metrics (default: integrations/kubernetes/kube-state-metrics)"
     optional = true
   }
 
@@ -175,10 +117,10 @@ declare "scrape" {
     optional = true
   }
 
-  // gitlab scrape job
-  prometheus.scrape "gitlab" {
-    job_name = coalesce(argument.job_label.value, "integrations/gitlab")
-    forward_to = [prometheus.relabel.gitlab.receiver]
+  // kube-state-metrics scrape job
+  prometheus.scrape "kube_state_metrics" {
+    job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube-state-metrics")
+    forward_to = [prometheus.relabel.kube_state_metrics.receiver]
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
@@ -188,8 +130,8 @@ declare "scrape" {
     }
   }
 
-  // gitlab metric relabelings (post-scrape)
-  prometheus.relabel "gitlab" {
+  // kube_state_metrics metric relabelings (post-scrape)
+  prometheus.relabel "kube_state_metrics" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
@@ -203,7 +145,7 @@ declare "scrape" {
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(up|(gitlab_ci_(active_jobs_sum|pipeline_size_builds_sum|runner_authentication_(failure|success)_total|trace_operations_total)|gitlab_rails_boot_time_seconds|http_request_duration_seconds_(count|sum)|http_requests_total|job_register_attempts_(failed_total|total)|pipelines_created_total|user_session_logins_total))")
+      regex = coalesce(argument.keep_metrics.value, "(up|kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*))")
       action = "keep"
     }
   }

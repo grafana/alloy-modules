@@ -1,6 +1,6 @@
 /*
-Module: job-consul
-Description: Scrapes consul
+Module: job-redis
+Description: Scrapes redis
 
 Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
@@ -22,23 +22,23 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app=consul\"])"
+    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=prometheus-redis-exporter\"])"
     optional = true
   }
 
   argument "port_name" {
-    comment = "The of the port to scrape metrics from (default: metrics)"
+    comment = "The of the port to scrape metrics from (default: redis-exporter)"
     optional = true
   }
 
-  // consul service discovery for all of the pods
-  discovery.kubernetes "consul" {
+  // redis service discovery for all of the pods
+  discovery.kubernetes "redis" {
     role = "pod"
 
     selectors {
       role = "pod"
-      field = join(coalesce(argument.fieldselectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["app=consul"]), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=prometheus-redis-exporter"]), ",")
     }
 
     namespaces {
@@ -46,9 +46,9 @@ declare "kubernetes" {
     }
   }
 
-  // consul relabelings (pre-scrape)
+  // redis relabelings (pre-scrape)
   discovery.relabel "kubernetes" {
-    targets = discovery.kubernetes.consul.targets
+    targets = discovery.kubernetes.redis.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
@@ -59,7 +59,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true@false"
+      regex = coalesce(argument.port_name.value, "redis-exporter") + "@Running@true@false"
       action = "keep"
     }
 
@@ -139,7 +139,7 @@ declare "kubernetes" {
 
 declare "local" {
   argument "port" {
-    comment = "The port to use (default: 9150)"
+    comment = "The port to use (default: 9121)"
     optional = true
   }
 
@@ -168,7 +168,7 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all consul metric (default: integrations/consul)"
+    comment = "The job label to add for all redis metric (default: integrations/redis)"
     optional = true
   }
 
@@ -203,10 +203,10 @@ declare "scrape" {
     optional = true
   }
 
-  // consul scrape job
-  prometheus.scrape "consul" {
-    job_name = coalesce(argument.job_label.value, "integrations/consul")
-    forward_to = [prometheus.relabel.consul.receiver]
+  // redis scrape job
+  prometheus.scrape "redis" {
+    job_name = coalesce(argument.job_label.value, "integrations/redis")
+    forward_to = [prometheus.relabel.redis.receiver]
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
@@ -216,8 +216,8 @@ declare "scrape" {
     }
   }
 
-  // consul metric relabelings (post-scrape)
-  prometheus.relabel "consul" {
+  // redis metric relabelings (post-scrape)
+  prometheus.relabel "redis" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
@@ -231,7 +231,7 @@ declare "scrape" {
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(up|consul_(commands_total|connections_total|current_(bytes|connections|items)|items_(evicted_total|total)|max_connections|read_bytes_total|up|uptime_seconds|version|written_bytes_total))")
+      regex = coalesce(argument.keep_metrics.value, "(up|redis_(blocked_clients|cluster_slots_(fail|pfail)|cluster_state|commands_(duration_seconds_total|total)|connected_(clients|slaves)|db_keys(_expiring)?|evicted_keys_total|keyspace_(hits|misses)_total|master_last_io_seconds_ago|memory_(fragmentation_ratio|max_bytes|used_(bytes|rss_bytes))|total_system_memory_bytes|up))")
       action = "keep"
     }
   }

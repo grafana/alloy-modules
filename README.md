@@ -1,15 +1,16 @@
-# Flow Modules
+# Alloy Modules
 
 <!-- markdownlint-disable MD033 -->
 <a href="https://grafana.com">
   <img height="20" src="https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" />
 </a>
 
-<p align="center"><img src="assets/logo_and_name.png" alt="Grafana Agent logo"></p>
+<p align="center">
+    <img src="assets/logo_alloy_light.svg#gh-dark-mode-only" alt="Grafana Alloy logo" height="100px">
+    <img src="assets/logo_alloy_dark.svg#gh-light-mode-only" alt="Grafana Alloy logo" height="100px">
+</p>
 
-**NOTE: This is only to be used for Modules not Modules Classic.**
-
-[Modules](https://grafana.com/docs/agent/latest/flow/concepts/modules/) are a way to create Grafana Agent [Flow](https://grafana.com/docs/agent/latest/flow/) configurations which can be loaded as a component. Modules are a great way to parameterize a configuration to create reusable pipelines.
+[Modules](https://grafana.com/docs/alloy/latest/concepts/modules/) are a way to create Grafana [Alloy](https://grafana.com/docs/alloy/latest/) configurations which can be loaded as a component. Modules are a great way to parameterize a configuration to create reusable pipelines.
 
 ## Submitting modules
 
@@ -17,7 +18,7 @@ Create a folder for the module under the `./modules` directory in the appropriat
 
 -   Components
 -   Brief description
--   Applicable Agent Versions
+-   Applicable Alloy versions
 -   Declare arguments and exports
 -   Example
 

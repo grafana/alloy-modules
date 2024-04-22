@@ -37,7 +37,7 @@ declare "kubernetes" {
 
     selectors {
       role = "service"
-      field = join(coalesce(argument.fieldselectors.value, []), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
       label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=opencost"]), ",")
     }
 
