@@ -99,7 +99,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all node_exporter instances in cluster.
 
-```river
+```alloy
 import.git "node_exporter" {
   repository = "https://github.com/node_exporter/agent-modules.git"
   revision = "main"
@@ -135,7 +135,7 @@ prometheus.remote_write "local" {
 
 The following example will scrape node_exporter for metrics on the local machine.
 
-```river
+```alloy
 import.git "node_exporter" {
   repository = "https://github.com/node_exporter/agent-modules.git"
   revision = "main"

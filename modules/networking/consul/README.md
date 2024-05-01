@@ -98,7 +98,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all consul instances in cluster.
 
-```river
+```alloy
 import.git "consul" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
@@ -134,7 +134,7 @@ prometheus.remote_write "local" {
 
 The following example will scrape consul for metrics on the local machine.
 
-```river
+```alloy
 import.git "consul" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
