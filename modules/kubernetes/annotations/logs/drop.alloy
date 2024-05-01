@@ -31,27 +31,27 @@ declare "drop_levels" {
     optional = true
   }
 
-  argument "debug_value" {
-    comment = "The regular expression to use to determine if debug logs should be dropped, if you want to drop debug by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
-    default = "true"
-    optional = true
-  }
-
-  argument "info_value" {
-    comment = "The regular expression to use to determine if info logs should be dropped, if you want to drop info by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
-    default = "true"
-    optional = true
-  }
-
   argument "trace_level" {
     comment = "The regular expression to use to match trace logs level label value (default: (?i)(trace?|trc))"
     default = "(?i)(trace?|trc)"
     optional = true
   }
 
+  argument "debug_value" {
+    comment = "The regular expression to use to determine if debug logs should be dropped, if you want to drop debug by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "true"
+    optional = true
+  }
+
   argument "debug_level" {
     comment = "The regular expression to use to match debug logs level label value (default: (?i)(debug?|dbg))"
     default = "(?i)(debug?|dbg)"
+    optional = true
+  }
+
+  argument "info_value" {
+    comment = "The regular expression to use to determine if info logs should be dropped, if you want to drop info by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "true"
     optional = true
   }
 
@@ -69,6 +69,10 @@ declare "drop_levels" {
     optional = true
     comment = "The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
+  }
+
+  export "annotation" {
+    value = argument.annotation.value
   }
 
   export "receiver" {

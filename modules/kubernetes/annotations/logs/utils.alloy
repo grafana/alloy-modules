@@ -107,7 +107,7 @@ declare "trim" {
 
     // check logs.grafana.com/trim annotation, if true trim any leading/trailing whitespace log line
     stage.match {
-      selector = "{" + argument.__sd_annotation.value + "_trim=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_trim=~\"" + argument.trim_value.value + "\"}"
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/trim: true"
 
       stage.template {
@@ -143,8 +143,8 @@ declare "dedup_spaces" {
     optional = true
   }
 
-  argument "trim_value" {
-    comment = "The regular expression to use to determine if whitespace should be embedded or not, if you want to embed the pod by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+  argument "dedup_value" {
+    comment = "The regular expression to use to determine if multiple spaces should be replaced with a single space or not, if you want to always dedup use '.*' or 'true|' (default: true)"
     default = "true"
     optional = true
   }
@@ -172,7 +172,7 @@ declare "dedup_spaces" {
 
     // check logs.grafana.com/trim annotation, if true trim any leading/trailing whitespace log line
     stage.match {
-      selector = "{" + argument.__sd_annotation.value + "_dedup_spaces=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_dedup_spaces=~\"" + argument.dedup_value.value + "\"}"
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/dedup-spaces: true"
 
       stage.replace {

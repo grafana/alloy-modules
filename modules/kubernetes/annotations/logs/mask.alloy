@@ -17,6 +17,12 @@ declare "mask_luhn" {
     optional = true
   }
 
+  argument "mask_luhn_value" {
+    comment = "The regular expression to use to determine if logs should have luhn values masked, if you want to mask luhn by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "min_length" {
     comment = "The minimum length of a Luhn match to mask (default: 13)"
     default = 13
@@ -39,6 +45,10 @@ declare "mask_luhn" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  export "annotation" {
+    value = argument.annotation.value
+  }
+
   export "receiver" {
     value = loki.process.mask_luhn.receiver
   }
@@ -49,7 +59,7 @@ declare "mask_luhn" {
     // check logs.grafana.com/mask-luhn annotation, if true the data will be masked as **LUHN*REDACTED**
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-luhn: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_luhn=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_luhn=~\"" + argument.mask_luhn_value.value + "\"}"
 
       stage.luhn {
         min_length = argument.min_length.value
@@ -77,6 +87,12 @@ declare "mask_credit_card" {
     optional = true
   }
 
+  argument "mask_credit_card_value" {
+    comment = "The regular expression to use to determine if logs should have credit card values masked, if you want to mask credit cards by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "replace_text" {
     comment = "The replacement text to use to for Credit Card matches (default: **CC*REDACTED**)"
     default = "**CC*REDACTED**"
@@ -91,6 +107,10 @@ declare "mask_credit_card" {
     optional = true
     comment = "The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
+  }
+
+  export "annotation" {
+    value = argument.annotation.value
   }
 
   export "receiver" {
@@ -109,7 +129,7 @@ declare "mask_credit_card" {
     //   JCB: 3[51-55][0-9]{14}
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-credit-card: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_credit_card=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_credit_card=~\"" + argument.mask_credit_card_value.value + "\"}"
 
       stage.replace {
         // unescaped regex: (4[0-9]{15}|5[1-5][0-9]{14}|3[47][0-9]{13}|6[0-9]{15}|3[51-55][0-9]{14})
@@ -138,6 +158,12 @@ declare "mask_email" {
     optional = true
   }
 
+  argument "mask_email_value" {
+    comment = "The regular expression to use to determine if logs should have emails masked, if you want to mask emails by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "replace_text" {
     comment = "The replacement text to use to for Email matches (default: **EMAIL*REDACTED**)"
     default = "**EMAIL*REDACTED**"
@@ -154,6 +180,10 @@ declare "mask_email" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  export "annotation" {
+    value = argument.annotation.value
+  }
+
   export "receiver" {
     value = loki.process.mask_email.receiver
   }
@@ -164,7 +194,7 @@ declare "mask_email" {
     // check logs.grafana.com/mask-email annotation, if true the data will be masked as **EMAIL*REDACTED**
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-email: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_email=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_email=~\"" + argument.mask_email_value.value + "\"}"
 
       stage.replace {
         // unescaped regex: ([\w\.=-]+@[\w\.-]+\.[\w]{2,64})
@@ -193,9 +223,15 @@ declare "mask_ipv4" {
     optional = true
   }
 
+  argument "mask_ipv4_value" {
+    comment = "The regular expression to use to determine if logs should have IPv4 values masked, if you want to mask IPv4 values by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "replace_text" {
-    comment = "The replacement text to use to for IPv4 matches (default: **IPV4*REDACTED**)"
-    default = "**IPV4*REDACTED**"
+    comment = "The replacement text to use to for IPv4 matches (default: **IPv4*REDACTED**)"
+    default = "**IPv4*REDACTED**"
     optional = true
   }
 
@@ -209,6 +245,10 @@ declare "mask_ipv4" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  export "annotation" {
+    value = argument.annotation.value
+  }
+
   export "receiver" {
     value = loki.process.mask_ipv4.receiver
   }
@@ -219,7 +259,7 @@ declare "mask_ipv4" {
     // check logs.grafana.com/mask-ipv4 annotation, if true the data will be masked as **IPV4*REDACTED**
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-ipv4: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_ipv4=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_ipv4=~\"" + argument.mask_ipv4_value.value + "\"}"
 
       stage.replace {
         // unescaped regex: ((\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})
@@ -248,6 +288,12 @@ declare "mask_ipv6" {
     optional = true
   }
 
+  argument "mask_ipv4_value" {
+    comment = "The regular expression to use to determine if logs should have IPv6 values masked, if you want to mask IPv6 values by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "replace_text" {
     comment = "The replacement text to use to for IPv6 matches (default: **IPV6*REDACTED**)"
     default = "**IPV6*REDACTED**"
@@ -264,6 +310,10 @@ declare "mask_ipv6" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  export "annotation" {
+    value = argument.annotation.value
+  }
+
   export "receiver" {
     value = loki.process.mask_ipv6.receiver
   }
@@ -274,7 +324,7 @@ declare "mask_ipv6" {
     // check logs.grafana.com/mask-ipv6 annotation, if true the data will be masked as **IPV6*REDACTED**
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-ipv6: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_ipv6=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_ipv6=~\"" + argument.mask_ipv6_value.value + "\"}"
 
       stage.replace {
         // unescaped regex: (([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))
@@ -303,6 +353,12 @@ declare "mask_phone" {
     optional = true
   }
 
+  argument "mask_phone_value" {
+    comment = "The regular expression to use to determine if logs should have phone numbers masked, if you want to mask phone numbers by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "replace_text" {
     comment = "The replacement text to use to for Text matches (default: **PHONE*REDACTED**)"
     default = "**PHONE*REDACTED**"
@@ -319,6 +375,10 @@ declare "mask_phone" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  export "annotation" {
+    value = argument.annotation.value
+  }
+
   export "receiver" {
     value = loki.process.mask_phone.receiver
   }
@@ -329,7 +389,7 @@ declare "mask_phone" {
     // check logs.grafana.com/mask-phone annotation, if true the data will be masked as **PHONE*REDACTED**
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-phone: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_phone=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_phone=~\"" + argument.mask_phone_value.value + "\"}"
 
       stage.replace {
         // unescaped regex: ([\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6})
@@ -358,6 +418,12 @@ declare "mask_ssn" {
     optional = true
   }
 
+  argument "mask_ssn_value" {
+    comment = "The regular expression to use to determine if logs should have SSNs masked, if you want to mask SSNs by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
+    default = "(?i)true"
+    optional = true
+  }
+
   argument "replace_text" {
     comment = "The replacement text to use to for SSN matches (default: **SSN*REDACTED**)"
     default = "**SSN*REDACTED**"
@@ -374,6 +440,10 @@ declare "mask_ssn" {
     default = replace(replace(replace(coalesce(argument.annotation.value, "logs.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
+  export "annotation" {
+    value = argument.annotation.value
+  }
+
   export "receiver" {
     value = loki.process.mask_ssn.receiver
   }
@@ -384,7 +454,7 @@ declare "mask_ssn" {
     // check logs.grafana.com/mask-ssn annotation, if true the data will be masked as **SSN*REDACTED**
     stage.match {
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/mask-ssn: true"
-      selector = "{" + argument.__sd_annotation.value + "_mask_ssn=~\"(?i)true\"}"
+      selector = "{" + argument.__sd_annotation.value + "_mask_ssn=~\"" + argument.mask_phone_value.value + "\"}"
 
       stage.replace {
         // unescaped regex: ([0-9]{3}-[0-9]{2}-[0-9]{4})

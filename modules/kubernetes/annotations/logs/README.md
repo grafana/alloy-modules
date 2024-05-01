@@ -1,6 +1,4 @@
-# Kubernetes Log Annotations Module
-
-## `logs.alloy`
+# Kubernetes Log Annotations Modules
 
 Annotations offer a versatile and powerful means to tailor log ingestion and processing, adapting log management to meet particular needs
 and specifications. They grant users the ability to selectively engage in specific log processing behaviors, circumventing the need for
@@ -34,59 +32,463 @@ The following pod annotations are supported:
 | `logs.grafana.com/scrub-timestamp`  | Boolean String     | []()                                      | whether or not the timestamp should be dropped from the log message (as it is metadata).                                                                                                                              |
 | `logs.grafana.com/scrub-level`      | Boolean String     | []()                                      | Determines if the level should be removed from the log message (as it is a label).                                                                                                                                    |
 
+---
 
+## `logs.alloy`
 
-### `kubernetes`
+### `pods`
 
-Handles discovery of kubernetes targets and exports them, this component does not perform any scraping at all and is not required to be used for kubernetes, as a custom service discovery and targets can be defined and passed to `cert_manager.scrape`
+---
+
+## `drop.alloy`
+
+### `drop_levels`
+
+Handles the dropping of log messages based on a determined log level. This can help reduce the overall number of log messages/volume while still allowing applications to log verbose messages. The following annotations are supported:
+
+-   `logs.grafana.com/drop-trace`
+-   `logs.grafana.com/drop-debug`
+-   `logs.grafana.com/drop-info`
 
 #### Arguments
 
-| Name                        | Required | Default               | Description                                                                                                                                                                                                                                                                                                                                                                            |
-| :-------------------------- | :------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `role`                      | _no_     | `endpoints`           | The role to use when looking for targets to scrape via annotations, can be: endpoints, service, pod                                                                                                                                                                                                                                                                                    |
-| `namespaces`                | _no_     | `[]`                  | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                                                                                                                                                                                                                                                            |
-| `field_selectors`           | _no_     | `[]`                  | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets                                                                                                                                                                                                                                              |
-| `label_selectors`           | _no_     | `[]`                  | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                                                                                                                                                                                                                                                       |
-| `annotation`                | _no_     | `metrics.grafana.com` | The domain to use when looking for annotations, Kubernetes selectors do not support a logical `OR`, if multiple types of annotations are needed, this module should be invoked multiple times.                                                                                                                                                                                         |
-| `tenant`                    | _no_     | `.*`                  | The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the `{{argument.annotation.value}}/tenant` annotation i.e. (`metrics.grafana.com/tenant`), and this can be a regular expression.  It is recommended to use a default i.e. `primary\|`, which would match the primary tenant or an empty string meaning the tenant is not set. |
-| `scrape_port_named_metrics` | _no_     | `false`               | Whether or not to automatically scrape targets that have a port with `.*metrics.*` in the name                                                                                                                                                                                                                                                                                         |
+| Name          | Required | Default               | Description                                                                                                                                                                          |
+| :------------ | :------- | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`  | _yes_    | `list(LogsReceiver)`  | Must be a where scraped should be forwarded to                                                                                                                                       |
+| `annotation`  | _no_     | `logs.grafana.com`    | The annotation namespace to use                                                                                                                                                      |
+| `trace_value` | _no_     | `"true"`              | The regular expression to use to determine if trace logs should be dropped, if you want to drop trace by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `trace_level` | _no_     | `"(?i)(trace?\|trc)"` | The regular expression to use to match trace logs level label value                                                                                                                  |
+| `debug_value` | _no_     | `"true"`              | The regular expression to use to determine if debug logs should be dropped, if you want to drop debug by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `debug_level` | _no_     | `(?i)(debug?\|dbg)`   | The regular expression to use to match debug logs level label value                                                                                                                  |
+| `info_value`  | _no_     | `"true"`              | The regular expression to use to determine if info logs should be dropped, if you want to drop info by default without setting the annotations everywhere use `".*"` or `"true\|"`   |
+| `info_level`  | _no_     | `(?i)(info?)`         | The regular expression to use to match info logs level label value                                                                                                                   |
 
 #### Exports
 
-| Name     | Type                | Description                |
-| :------- | :------------------ | :------------------------- |
-| `output` | `list(map(string))` | List of discovered targets |
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
 
-#### Labels
+---
 
-The following labels are automatically added to exported targets.
+## `embed.alloy`
 
-| Label       | Description                                                                                                                                         |
-| :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                   |
-| `component` | Derived from the pod label value of `app.kubernetes.io/component`, `k8s-component`, or `component                                                   |
-| `container` | The name of the container, usually `haproxy`                                                                                                        |
-| `namespace` | The namespace the target was found in.                                                                                                              |
-| `pod`       | The full name of the pod                                                                                                                            |
-| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                   |
-| `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `ReplicaSet/my-app` |
+### `embed_pod`
 
-### `scrape`
+Loki supports [Structured Metadata](https://grafana.com/docs/loki/latest/get-started/labels/structured-metadata/) which is the ideal solution to embedding information without adding additional labels.  However, if this is not possible then the next best solution is to embed the name of the pod at the end of the log line.  The module accounts for json or raw text, and supports the following annotation:
+
+-   `logs.grafana.com/embed-pod`
 
 #### Arguments
 
-| Name              | Required | Default                       | Description                                                                                                                                         |
-| :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name              | Required | Default              | Description                                                                                                                                                                              |
+| :---------------- | :------- | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                           |
+| `annotation`      | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                          |
+| `embed_pod_value` | _no_     | `"true"`             | The regular expression to use to determine if pod should be embedded or not, if you want to embed the pod by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `embed_pod_key`   | _no_     | `"__pod"`            | The key to use to embed the pod name into the log message                                                                                                                                |
 
-#### Labels
+#### Exports
 
-N/A
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+---
+
+## `json.alloy`
+
+### `json_scrub_empties`
+
+JSON is great because it offers a flexible storage schema, where the "schema" is stored next to the value. However, this flexibility comes at a cost; JSON is not an efficient storage mechanism because the "schema" is repeatedly stored next to each value. This can lead to unnecessary and extra bytes, especially when values are empty or defaulted, such as an empty string `""`, an empty object `{}`, or an empty array `[]`. When a value is empty, both the property and the value can be
+removed to optimize storage. The following annotation supports this functionality:
+
+-   `logs.grafana.com/scrub-empties`
+
+#### Arguments
+
+| Name                  | Required | Default              | Description                                                                                                                                                                                       |
+| :-------------------- | :------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `forward_to`          | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                                    |
+| `annotation`          | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                                   |
+| `scrub_empties_value` | _no_     | `"true"`             | The regular expression to use to determine if logs should have json empties scrubbed, if you want to scrub empties by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `json_scrub_nulls`
+
+Similar to `scrub-empties`, scrubbing `null` values from JSON logs can be beneficial for the same reasons, offering similar cost benefits. Removing `null` values can help reduce the storage size by eliminating unnecessary JSON entries. The following annotation supports this optimization:
+
+-   `logs.grafana.com/scrub-nulls`
+
+#### Arguments
+
+| Name                | Required | Default              | Description                                                                                                                                                                                   |
+| :------------------ | :------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`        | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                                |
+| `annotation`        | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                               |
+| `scrub_nulls_value` | _no_     | `"true"`             | The regular expression to use to determine if logs should have json nulls scrubbed, if you want to scrub nulls by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+---
+
+## `mask.alloy`
+
+### `mask_luhn`
+
+Supports detecting and masking strings within log lines that match the [Luhn Algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm).
+
+-   `logs.grafana.com/mask-luhn`
+
+#### Arguments
+
+| Name              | Required | Default               | Description                                                                                                                                                                                |
+| :---------------- | :------- | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(LogsReceiver)`  | Must be a where scraped should be forwarded to                                                                                                                                             |
+| `annotation`      | _no_     | `logs.grafana.com`    | The annotation namespace to use                                                                                                                                                            |
+| `mask_luhn_value` | _no_     | `"(?i)true"`          | The regular expression to use to determine if logs should have luhn values masked, if you want to mask luhn by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `min_length`      | _no_     | `13`                  | The minimum length of a Luhn match to mask                                                                                                                                                 |
+| `replace_text`    | _no_     | `"**LUHN*REDACTED**"` | The replacement text to use to for Luhn matches                                                                                                                                            |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `mask_credit_card`
+
+Supports detecting and masking strings within log lines that match various credit card formats.
+
+-   `logs.grafana.com/mask-credit-card`
+
+#### Arguments
+
+| Name                     | Required | Default              | Description                                                                                                                                                                                               |
+| :----------------------- | :------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`             | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                                            |
+| `annotation`             | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                                           |
+| `mask_credit_card_value` | _no_     | `"(?i)true"`         | The regular expression to use to determine if logs should have credit card values masked, if you want to mask credit cards by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `replace_text`           | _no_     | `"**CC*REDACTED**"`  | The replacement text to use to for Credit Card matches                                                                                                                                                    |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `mask_email`
+
+Supports detecting and masking strings within log lines that match various email formats.
+
+-   `logs.grafana.com/mask-email`
+
+#### Arguments
+
+| Name               | Required | Default                | Description                                                                                                                                                                             |
+| :----------------- | :------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`       | _yes_    | `list(LogsReceiver)`   | Must be a where scraped should be forwarded to                                                                                                                                          |
+| `annotation`       | _no_     | `logs.grafana.com`     | The annotation namespace to use                                                                                                                                                         |
+| `mask_email_value` | _no_     | `"(?i)true"`           | The regular expression to use to determine if logs should have emails masked, if you want to mask emails by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `replace_text`     | _no_     | `"**EMAIL*REDACTED**"` | The replacement text to use to for Credit Card matches                                                                                                                                  |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `mask_ipv4`
+
+Supports detecting and masking strings within log lines that match IPv4 formats.
+
+-   `logs.grafana.com/mask-ipv4`
+
+#### Arguments
+
+| Name              | Required | Default               | Description                                                                                                                                                                                       |
+| :---------------- | :------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `forward_to`      | _yes_    | `list(LogsReceiver)`  | Must be a where scraped should be forwarded to                                                                                                                                                    |
+| `annotation`      | _no_     | `logs.grafana.com`    | The annotation namespace to use                                                                                                                                                                   |
+| `mask_ipv4_value` | _no_     | `"(?i)true"`          | The regular expression to use to determine if logs should have IPv4 values masked, if you want to mask IPv4 values by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `replace_text`    | _no_     | `"**IPv4*REDACTED**"` | The replacement text to use to for Credit Card matches                                                                                                                                            |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `mask_ipv6`
+
+Supports detecting and masking strings within log lines that match IPv6 formats.
+
+-   `logs.grafana.com/mask-ipv6`
+
+#### Arguments
+
+| Name              | Required | Default               | Description                                                                                                                                                                                       |
+| :---------------- | :------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `forward_to`      | _yes_    | `list(LogsReceiver)`  | Must be a where scraped should be forwarded to                                                                                                                                                    |
+| `annotation`      | _no_     | `logs.grafana.com`    | The annotation namespace to use                                                                                                                                                                   |
+| `mask_ipv6_value` | _no_     | `"(?i)true"`          | The regular expression to use to determine if logs should have IPv6 values masked, if you want to mask IPv6 values by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `replace_text`    | _no_     | `"**IPv6*REDACTED**"` | The replacement text to use to for Credit Card matches                                                                                                                                            |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `mask_phone`
+
+Supports detecting and masking strings within log lines that match phone number formats.
+
+-   `logs.grafana.com/mask-phone`
+
+#### Arguments
+
+| Name               | Required | Default                | Description                                                                                                                                                                                           |
+| :----------------- | :------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`       | _yes_    | `list(LogsReceiver)`   | Must be a where scraped should be forwarded to                                                                                                                                                        |
+| `annotation`       | _no_     | `logs.grafana.com`     | The annotation namespace to use                                                                                                                                                                       |
+| `mask_phone_value` | _no_     | `"(?i)true"`           | The regular expression to use to determine if logs should have phone numbers masked, if you want to mask phone numbers by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `replace_text`     | _no_     | `"**PHONE*REDACTED**"` | The replacement text to use to for Credit Card matches                                                                                                                                                |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `mask_ssn`
+
+Supports detecting and masking strings within log lines that match social security number formats.
+
+-   `logs.grafana.com/mask-ssn`
+
+#### Arguments
+
+| Name             | Required | Default              | Description                                                                                                                                                                         |
+| :--------------- | :------- | :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`     | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                      |
+| `annotation`     | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                     |
+| `mask_ssn_value` | _no_     | `"(?i)true"`         | The regular expression to use to determine if logs should have SSNs masked, if you want to mask SSNs by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+| `replace_text`   | _no_     | `"**SSN*REDACTED**"` | The replacement text to use to for SSN matches                                                                                                                                      |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+---
+
+## `utils.alloy`
+
+### `decolorize`
+
+Supports the removal of ANSI color codes from the log lines, thus making it easier to parse logs and reducing bytes.
+
+-   `logs.grafana.com/decolorize`
+
+#### Arguments
+
+| Name               | Required | Default              | Description                                                                                                                                                                        |
+| :----------------- | :------- | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`       | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                     |
+| `annotation`       | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                    |
+| `decolorize_value` | _no_     | `"(?i)true"`         | The regular expression to use to determine if logs should be decolorized, if you want to decolorize by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `trim`
+
+Supports the removal of any leading or trailing whitespace from the log lines.
+
+-   `logs.grafana.com/trim`
+
+#### Arguments
+
+| Name         | Required | Default              | Description                                                                                                                                                                                     |
+| :----------- | :------- | :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to` | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                                                  |
+| `annotation` | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                                                 |
+| `trim_value` | _no_     | `"(?i)true"`         | The regular expression to use to determine if whitespace should be embedded or not, if you want to embed the pod by default without setting the annotations everywhere use `".*"` or `"true\|"` |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `dedup_spaces`
+
+Supports replacing two or more spaces with a single space.
+
+-   `logs.grafana.com/trim`
+
+#### Arguments
+
+| Name         | Required | Default              | Description                                                                                                                                                       |
+| :----------- | :------- | :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to` | _yes_    | `list(LogsReceiver)` | Must be a where scraped should be forwarded to                                                                                                                    |
+| `annotation` | _no_     | `logs.grafana.com`   | The annotation namespace to use                                                                                                                                   |
+| `trim_value` | _no_     | `"(?i)true"`         | The regular expression to use to determine if multiple spaces should be replaced with a single space or not, if you want to always dedup use `".*"` or `"true\|"` |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+### `sampling`
+
+Supports sampling of logs at a given rate
+
+-   `logs.grafana.com/sampling`
+
+#### Arguments
+
+| Name              | Required | Default               | Description                                                                                                                                                       |
+| :---------------- | :------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(LogsReceiver)`  | Must be a where scraped should be forwarded to                                                                                                                    |
+| `annotation`      | _no_     | `logs.grafana.com`    | The annotation namespace to use                                                                                                                                   |
+| `sampling_value`  | _no_     | `"(?i)true"`          | The regular expression to use to determine if multiple spaces should be replaced with a single space or not, if you want to always dedup use `".*"` or `"true\|"` |
+| `sampling_rate`   | _no_     | `0.25`                | The sampling rate in a range of [0, 1]                                                                                                                            |
+| `sampling_reason` | _no_     | `annotation_sampling` | The sampling reason                                                                                                                                               |
+
+#### Exports
+
+| Name         | Type           | Description                                     |
+| :----------- | :------------- | :---------------------------------------------- |
+| `annotation` | `string`       | The value passed into the `annotation` argument |
+| `receiver`   | `LogsReceiver` | The `loki.process` receiver for the module      |
+
+---
+
+## Usage
+
+```alloy
+import.git "log_utils" {
+  repository = "https://github.com/grafana/alloy-modules.git"
+  revision   = "main"
+  path       = "modules/utils/logs/"
+}
+
+import.git "k8s_logs" {
+  repository = "https://github.com/grafana/alloy-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/core/logs.alloy"
+}
+
+import.git "log_annotations" {
+  repository = "https://github.com/grafana/alloy-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/annotations/logs.alloy"
+}
+
+log_annotations.pods "targets" {
+  annotation = "logs.grafana.com"
+}
+
+k8s_logs.from_worker "default" {
+  targets = log_annotations.pods.targets.output
+  forward_to = [log_annotations.decolorize.default.receiver]
+}
+
+log_annotations.decolorize "default" {
+  forward_to = [log_utils.default_level.default.receiver]
+  annotation = "logs.grafana.com"
+}
+
+log_utils.default_level "default" {
+  forward_to = [log_utils.normalize_level.default.receiver]
+}
+
+log_utils.normalize_level "default" {
+  forward_to = [
+    log_utils.pre_process_metrics.default.receiver,
+    log_annotations.drop_levels.default.receiver,
+  ]
+}
+
+log_utils.pre_process_metrics "default" {}
+
+log_annotations.drop_levels "default" {
+  forward_to = [log_annotations.mask.default.receiver]
+  annotation = "logs.agent.grafana.com"
+}
+
+log_annotations.mask "default" {
+  forward_to = [log_annotations.trim.default.receiver]
+  annotation = "logs.agent.grafana.com"
+}
+
+log_annotations.trim "default" {
+  forward_to = [log_annotations.dedup_spaces.default.receiver]
+  annotation = "logs.agent.grafana.com"
+}
+
+log_annotations.dedup_spaces "default" {
+  forward_to = [log_utils.structured_metadata.default.receiver]
+  annotation = "logs.agent.grafana.com"
+}
+
+log_utils.structured_metadata "default" {
+  forward_to = [log_utils.keep_labels.default.receiver]
+}
+
+log_utils.keep_labels "default" {
+  forward_to = [
+    log_utils.post_process_metrics.default.receiver,
+    loki.write.local.receiver,
+  ]
+}
+
+log_utils.post_process_metrics "default" {}
+
+loki.write "local" {
+  endpoint {
+    url = env("LOGS_PRIMARY_URL")
+
+    basic_auth {
+      username = env("LOGS_PRIMARY_TENANT")
+      password = env("LOGS_PRIMARY_TOKEN")
+    }
+  }
+
+  external_labels = {
+    "cluster" = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), ""),
+    "env" = coalesce(env("ENV"), ""),
+    "region" = coalesce(env("REGION"), ""),
+  }
+}
+```

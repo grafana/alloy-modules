@@ -21,7 +21,7 @@ declare "json_scrub_empties" {
 
   argument "scrub_empties_value" {
     comment = "The regular expression to use to determine if logs should have json empties scrubbed, if you want to scrub empties by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
-    default = "true"
+    default = "(?i)true"
     optional = true
   }
 
@@ -50,6 +50,7 @@ declare "json_scrub_empties" {
     // an empty string "", empty object {} or empty array [] is removed
     // this can reduce the overall # of bytes sent and stored in Loki
     stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/scrub-empties: true"
       selector = "{" + argument.__sd_annotation.value + "_scrub_empties=~\"" + argument.scrub_empties_value.value + "\"} |~ \"^\\s*{(.|\n)+}\\s*$\""
 
       // remove null properties
@@ -87,7 +88,7 @@ declare "json_scrub_nulls" {
 
   argument "scrub_nulls_value" {
     comment = "The regular expression to use to determine if logs should have json nulls scrubbed, if you want to scrub nulls by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
-    default = "true"
+    default = "(?i)true"
     optional = true
   }
 
@@ -116,6 +117,7 @@ declare "json_scrub_nulls" {
     // an empty string "", empty object {} or empty array [] is removed
     // this can reduce the overall # of bytes sent and stored in Loki
     stage.match {
+      pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/scrub-nulls: true"
       selector = "{" + argument.__sd_annotation.value + "_scrub_nulls=~\"" + argument.scrub_nulls_value.value + "\"} |~ \"^\\s*{(.|\n)+}\\s*$\""
 
       // remove null properties
