@@ -29,8 +29,6 @@ The following pod annotations are supported:
 | `logs.grafana.com/trim`             | Boolean String     | [trim](#trim)                             | Whether or not to trim the log line using [`strings.Trim`](https://pkg.go.dev/strings#Trim)                                                                                                                           |
 | `logs.grafana.com/dedup-spaces`     | Boolean String     | [dedup_spaces](#dedup_spaces)             | Determines if instances of 2 or more spaces should be replaced with a single space                                                                                                                                    |
 | `logs.grafana.com/sample`           | Boolean String     | [sample](#sample)                         | Determines if logs from the pod should be sampled, using [`stage.sample`](https://grafana.com/docs/alloy/latest/reference/components/loki.process/#stagesampling-block), at a given rate between 0-1 (.25) by default |
-| `logs.grafana.com/scrub-timestamp`  | Boolean String     | []()                                      | whether or not the timestamp should be dropped from the log message (as it is metadata).                                                                                                                              |
-| `logs.grafana.com/scrub-level`      | Boolean String     | []()                                      | Determines if the level should be removed from the log message (as it is a label).                                                                                                                                    |
 
 ---
 
