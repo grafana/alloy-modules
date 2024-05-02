@@ -21,7 +21,7 @@ declare "decolorize" {
 
   argument "decolorize_value" {
     comment = "The regular expression to use to determine if logs should be decolorized, if you want to decolorize by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
-    default = "true"
+    default = "(?i)true"
     optional = true
   }
 
@@ -244,7 +244,7 @@ declare "sampling" {
   loki.process "sampling" {
     forward_to = argument.forward_to.value
 
-    // check logs.grafana.com/trim annotation, if true trim any leading/trailing whitespace log line
+    // check logs.grafana.com/sampling annotation, if true the logs will be sampled at the specified rate
     stage.match {
       selector = "{" + argument.__sd_annotation.value + "_sampling=~\"" + argument.sampling_value.value + "\"}"
       pipeline_name = "pipeline for annotation || " + argument.annotation.value + "/sampling: true"
