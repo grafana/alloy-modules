@@ -78,13 +78,13 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=grafana-agent\"])"
+    comment = "The label selectors to use to find matching targets (default: [])"
     optional = true
   }
 
   argument "annotation" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    // k8s selectors d not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
+    // k8s selectors do not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
     // i.e. probes.grafana.com, then again for prometheus.io
     comment = "The annotation namespace to use (default: probes.grafana.com)"
     default = "probes.grafana.com"
@@ -112,7 +112,7 @@ declare "kubernetes" {
   }
 
   // annotations service discovery
-  discovery.kubernetes "probes" {
+  discovery.kubernetes "probe_annotations" {
     role = coalesce(argument.role.value, "service")
 
     selectors {
@@ -127,7 +127,7 @@ declare "kubernetes" {
   }
 
   discovery.relabel "probes" {
-    targets = discovery.kubernetes.probes.targets
+    targets = discovery.kubernetes.probe_annotations.targets
 
     /****************************************************************************************************************
     * Handle Targets to Keep or Drop
@@ -403,7 +403,7 @@ declare "kubernetes" {
   }
 
   export "output" {
-    value = discovery.relabel.probes.output
+    value = discovery.relabel.probe_annotations.output
   }
 }
 

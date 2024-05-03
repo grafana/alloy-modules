@@ -98,7 +98,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all Loki instances in cluster.
 
-```river
+```alloy
 import.git "loki" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
@@ -134,7 +134,7 @@ prometheus.remote_write "local" {
 
 The following example will scrape Loki for metrics on the local machine.
 
-```river
+```alloy
 import.git "loki" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"

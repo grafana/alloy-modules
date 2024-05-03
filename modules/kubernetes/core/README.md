@@ -244,7 +244,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all agents in cluster.
 
-```river
+```alloy
 import.git "k8s" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"

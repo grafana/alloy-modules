@@ -99,7 +99,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all Mimir instances in cluster.
 
-```river
+```alloy
 import.git "mimir" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
@@ -135,7 +135,7 @@ prometheus.remote_write "local" {
 
 The following example will scrape Mimir for metrics on the local machine.
 
-```river
+```alloy
 import.git "mimir" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"

@@ -67,7 +67,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all push-gateway in cluster.
 
-```river
+```alloy
 import.git "push_gateway" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
