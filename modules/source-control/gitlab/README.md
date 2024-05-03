@@ -97,7 +97,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all gitlab instances in cluster.
 
-```river
+```alloy
 import.git "gitlab" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
@@ -133,7 +133,7 @@ prometheus.remote_write "local_primary" {
 
 The following example will scrape gitlab for metrics on the local machine.
 
-```river
+```alloy
 import.git "gitlab" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"

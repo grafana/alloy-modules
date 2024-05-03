@@ -72,7 +72,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all konnectivity instances in cluster.
 
-```river
+```alloy
 import.git "konnectivity" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
