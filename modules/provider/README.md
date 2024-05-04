@@ -3,8 +3,9 @@
 This module provides receivers components for collecting data(`logs` `metrics` `traces` `profiles`).
 
 ## Components
-  - [`self_hosted_stack`](#self_hosted_stack)
-  - [`grafana_cloud`](#grafana_cloud)
+
+-   [`self_hosted_stack`](#self_hosted_stack)
+-   [`grafana_cloud`](#grafana_cloud)
 
 ### `self_hosted_stack`
 
@@ -14,10 +15,10 @@ Module component to configure receivers for Self Hosted LGTMP Stack.
 
 | Name                    | Required | Default                             | Description                         |
 |:------------------------|:---------|:------------------------------------|:------------------------------------|
-| `metrics_endpoint_url`  | _no_     | `http://mimir:8080/api/v1/push`     | Where to send collected `metrics`.  |
-| `logs_endpoint_url`     | _no_     | `http://loki:3100/loki/api/v1/push` | Where to send collected `logs`.     |
-| `traces_endpoint_url`   | _no_     | `http://tempo:4318`                 | Where to send collected `traces`.   |
-| `profiles_endpoint_url` | _no_     | `http://pyroscope:4040`             | Where to send collected `profiles`. |
+| `metrics_endpoint_url`  | *no*     | `http://mimir:8080/api/v1/push`     | Where to send collected `metrics`.  |
+| `logs_endpoint_url`     | *no*     | `http://loki:3100/loki/api/v1/push` | Where to send collected `logs`.     |
+| `traces_endpoint_url`   | *no*     | `http://tempo:4318`                 | Where to send collected `traces`.   |
+| `profiles_endpoint_url` | *no*     | `http://pyroscope:4040`             | Where to send collected `profiles`. |
 
 ***Exports***
 
@@ -67,21 +68,21 @@ Module component to automatically configure receivers for Grafana Cloud.
 
 To create a token:
 
-1. Navigate to the [Grafana Cloud Portal](https://grafana.com/profile/org)
-2. Go to either the `Access Policies` or `API Keys` page, located in the `Security` section
-3. Create an Access Policy or API token with the correct permissions
+1.  Navigate to the [Grafana Cloud Portal](https://grafana.com/profile/org)
+2.  Go to either the `Access Policies` or `API Keys` page, located in the `Security` section
+3.  Create an Access Policy or API token with the correct permissions
 
 The token must have permissions to read stack information. The setup of these permissions depends on the type of token:
 
-- Access Policies need the `stacks:read` scope
-- API Keys need at least the the `MetricsPublisher` role
+-   Access Policies need the `stacks:read` scope
+-   API Keys need at least the the `MetricsPublisher` role
 
 ***Arguments***
 
 | Name         | Required | Default | Description                                        |
 |:-------------|:---------|:--------|:---------------------------------------------------|
-| `stack_name` | _yes_    | `N/A`   | Name of your stack as shown in the account console |
-| `token`      | _yes_    | `N/A`   | Access policy token or API Key.                    |
+| `stack_name` | *yes*    | `N/A`   | Name of your stack as shown in the account console |
+| `token`      | *yes*    | `N/A`   | Access policy token or API Key.                    |
 
 ***Exports***
 
