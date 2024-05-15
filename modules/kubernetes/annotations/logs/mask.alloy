@@ -288,7 +288,7 @@ declare "mask_ipv6" {
     optional = true
   }
 
-  argument "mask_ipv4_value" {
+  argument "mask_ipv6_value" {
     comment = "The regular expression to use to determine if logs should have IPv6 values masked, if you want to mask IPv6 values by default without setting the annotations everywhere use '.*' or 'true|' (default: true)"
     default = "(?i)true"
     optional = true
