@@ -74,7 +74,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all cert_manager instances in cluster.
 
-```river
+```alloy
 import.git "cert_manager" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
@@ -110,7 +110,7 @@ prometheus.remote_write "local" {
 
 The following example will scrape cert_manager for metrics on the local machine.
 
-```river
+```alloy
 import.git "cert_manager" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
