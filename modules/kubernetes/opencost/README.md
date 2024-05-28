@@ -97,7 +97,7 @@ The following labels are automatically added to exported targets.
 
 The following example will scrape all opencost instances in cluster.
 
-```river
+```alloy
 import.git "opencost" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"

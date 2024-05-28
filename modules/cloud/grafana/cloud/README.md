@@ -1,5 +1,10 @@
 # Grafana Cloud Auto-Configuration Module
 
+> [!WARNING]
+> Currently, the Pyroscope functionality in this module is under the `public-preview` stability level. As such, to use this module, you will need to pass `--stability.level=public-preview` to your `alloy run` command.
+>
+> See the docs for [`pyroscope.write`](https://grafana.com/docs/alloy/latest/reference/components/pyroscope.write/) and [Grafana Labs' Release Lifecycle](https://grafana.com/docs/release-life-cycle/) for more info on this.
+
 Module to interact with Grafana Cloud.
 
 ## Components
@@ -44,17 +49,17 @@ The token must have permissions to read stack information. The setup of these pe
 
 ### `stack`
 
-```river
+```alloy
 import.git "grafana_cloud" {
-  repository = "https://github.com/grafana/flow-modules.git"
+  repository = "https://github.com/grafana/alloy-modules.git"
   revision = "main"
-  path = "modules/cloud/grafana.river"
+  path = "modules/cloud/grafana/cloud/module.alloy"
   pull_frequency = "15m"
 }
 
 // get the receivers
 grafana_cloud.stack "receivers" {
-  stack = "DashyMcDashFace"
+  stack_name = "DashyMcDashFace"
   token = "XXXXXXXXXXXXX"
 }
 
