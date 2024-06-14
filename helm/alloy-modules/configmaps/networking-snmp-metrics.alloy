@@ -1,0 +1,55 @@
+declare "scrape" {
+  argument "address" {
+    comment = "Address for the SNMP Walk"
+  }
+
+  argument "module" {
+    comment = "Module for the snmp walk"
+  }
+
+  argument "auth" {
+    comment = "Auth for the snmp walk"
+  }
+
+  argument "config_file" {
+    comment = "Path to the snmp config file"
+  }
+
+  argument "forward_to" {
+    comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "job_name" {
+    comment = "Value for the job label. Defaults to 'integration/snmp'"
+    optional = true
+  }
+
+  prometheus.exporter.snmp "integrations_snmp" {
+      config_file = "/etc/alloy/snmp.yml"
+      target "network_switch_1" {
+          address = argument.address.value
+          module  = argument.module.value
+          auth    = argument.auth.value
+      }
+  }
+  discovery.relabel "integrations_snmp" {
+      targets = prometheus.exporter.snmp.integrations_snmp.targets
+
+      rule {
+          source_labels = ["job"]
+          regex         = "(^.*snmp)\\/(.*)"
+          target_label  = "job_snmp"
+      }
+
+      rule {
+          replacement   = argument.address.value
+          target_label  = "snmp_target"
+      }
+  }
+  prometheus.scrape "integrations_snmp" {
+      targets    = discovery.relabel.integrations_snmp.output
+      forward_to = argument.forward_to.value
+      job_name   = coalesce(argument.job_name.value, "integrations/snmp")
+  }
+
+}
