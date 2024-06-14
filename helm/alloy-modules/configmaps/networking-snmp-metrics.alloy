@@ -1,8 +1,4 @@
 declare "scrape" {
-  argument "target_name" {
-    comment = "Display name for the target"
-  }
-
   argument "address" {
     comment = "Address for the SNMP Walk"
   }
@@ -30,7 +26,7 @@ declare "scrape" {
 
   prometheus.exporter.snmp "integrations_snmp" {
       config_file = argument.config_file.value
-      target argument.target_name.value {
+      target "snmp_target" {
           address = argument.address.value
           module  = argument.module.value
           auth    = argument.auth.value
