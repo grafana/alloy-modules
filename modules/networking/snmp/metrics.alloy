@@ -24,8 +24,13 @@ declare "scrape" {
     optional = true
   }
 
+  remote.kubernetes.configmap "snmp" {
+    namespace = "alloy"
+    name      = "snmp"
+  }
+
   prometheus.exporter.snmp "integrations_snmp" {
-      config_file = "/etc/alloy/snmp.yml"
+      config = remote.kubernetes.configmap.snmp.data["snmp.yaml"]
       target "network_switch_1" {
           address = argument.address.value
           module  = argument.module.value
