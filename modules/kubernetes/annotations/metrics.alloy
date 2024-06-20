@@ -541,8 +541,6 @@ declare "metrics" {
     forward_to = [prometheus.relabel.annotations.receiver]
     targets = discovery.relabel.http_annotations.output
     scheme = "http"
-    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
-    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
 
     clustering {
       enabled = coalesce(argument.clustering.value, false)
@@ -566,8 +564,6 @@ declare "metrics" {
     forward_to = [prometheus.relabel.annotations.receiver]
     targets = discovery.relabel.https_annotations.output
     scheme = "https"
-    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
-    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
     bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
     tls_config {
