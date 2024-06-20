@@ -288,7 +288,7 @@ The following example will scrape all metric annotation instances in cluster.
 
 ```alloy
 import.git "metric_annotations" {
-  repository = "https://github.com/grafana/flow-modules.git"
+  repository = "https://github.com/grafana/alloy-modules.git"
   revision = "main"
   path = "modules/kubernetes/annotations/metrics.alloy"
   pull_frequency = "15m"
@@ -300,7 +300,7 @@ metric_annotations.kubernetes "targets" {
 }
 
 // scrape the annotations
-metric_annotations.scrape "metrics" {
+metric_annotations.metrics "scrape" {
   targets = metric_annotations.kubernetes.targets.output
   forward_to = [
     prometheus.remote_write.default.receiver,
@@ -326,7 +326,7 @@ The following example will scrape all probe annotation instances in cluster.
 
 ```alloy
 import.git "probe_annotations" {
-  repository = "https://github.com/grafana/flow-modules.git"
+  repository = "https://github.com/grafana/alloy-modules.git"
   revision = "main"
   path = "modules/kubernetes/annotations/probes.alloy"
   pull_frequency = "15m"
@@ -338,7 +338,7 @@ probe_annotations.kubernetes "targets" {
 }
 
 // scrape the annotations
-probe_annotations.scrape "probes" {
+probe_annotations.probe "scrape" {
   targets = probe_annotations.kubernetes.targets.output
   forward_to = [
     prometheus.remote_write.default.receiver,
