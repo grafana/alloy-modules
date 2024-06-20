@@ -239,6 +239,8 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | `label_selectors` | _no_     | `[]`                  | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                                                                                                                                                                                                                                                       |
 | `annotation`      | _no_     | `metrics.grafana.com` | The domain to use when looking for annotations, Kubernetes selectors do not support a logical `OR`, if multiple types of annotations are needed, this module should be invoked multiple times.                                                                                                                                                                                         |
 | `tenant`          | _no_     | `.*`                  | The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the `{{argument.annotation.value}}/tenant` annotation i.e. (`metrics.grafana.com/tenant`), and this can be a regular expression.  It is recommended to use a default i.e. `primary\|`, which would match the primary tenant or an empty string meaning the tenant is not set. |
+| `scrape_interval` | _no_     | `60s`                 | How often to scrape metrics from the targets                                                                                                                                                                                                                                                                                                                                           |
+| `scrape_timeout`  | _no_     | `10s`                 | How long before a scrape times out                                                                                                                                                                                                                                                                                                                                                     |
 | `blackbox_url`    | _no_     | `""`                  | The address of the blackbox exporter to use (without the protocol), only the hostname and port i.e. `blackbox-prometheus-blackbox-exporter.default.svc.cluster.local:9115`                                                                                                                                                                                                             |
 
 #### Exports
@@ -263,16 +265,14 @@ The following labels are automatically added to exported targets.
 
 #### Arguments
 
-| Name              | Required | Default                       | Description                                                                                                                                         |
-| :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L228) | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L235) | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name             | Required | Default                       | Description                                                                                                                                         |
+| :--------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `targets`        | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
+| `forward_to`     | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
+| `keep_metrics`   | _no_     | [see code](module.alloy#L228) | A regular expression of metrics to keep                                                                                                             |
+| `drop_metrics`   | _no_     | [see code](module.alloy#L235) | A regular expression of metrics to drop                                                                                                             |
+| `max_cache_size` | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`     | _no_     | `false`                       | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
 
 #### Labels
 
