@@ -48,7 +48,7 @@ declare "kubernetes" {
 
   // cert-manager relabelings (pre-scrape)
   discovery.relabel "kubernetes" {
-    targets = discovery.kubernetes.cert-manager.targets
+    targets = discovery.kubernetes.cert_manager.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
@@ -185,7 +185,7 @@ declare "scrape" {
   // cert-manager scrape job
   prometheus.scrape "cert_manager" {
     job_name = coalesce(argument.job_label.value, "integrations/cert-manager")
-    forward_to = [prometheus.relabel.cert-manager.receiver]
+    forward_to = [prometheus.relabel.cert_manager.receiver]
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
