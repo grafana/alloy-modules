@@ -119,7 +119,7 @@ declare "scrape" {
   prometheus.scrape "push_gateway" {
     job_name = coalesce(argument.job_label.value, "integrations/pushgateway")
     forward_to = [prometheus.relabel.push_gateway.receiver]
-    targets = discovery.relabel.push_gateway.output
+    targets = coalesce(argument.targets.value, [])
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
 
