@@ -1,0 +1,233 @@
+declare "central" {
+  // -- ARGUMENTS
+  argument "otlp_http_endpoint" {
+    optional = true
+    default  = "0.0.0.0:4318"
+  }
+
+  argument "otlp_grpc_endpoint" {
+    optional = true
+    default  = "0.0.0.0:4317"
+  }
+
+  argument "prometheus_endpoint" {
+    optional = true
+    default  = "https://cortex.obs.ikarem.io/api/v1/push"
+  }
+
+  argument "tempo_endpoint" {
+    optional = true
+    default  = "otel-collector.otel.svc.cluster.local:4317"
+  }
+
+  argument "metrics_tenant" {
+    optional = true
+    comment  = "Grafana Mimir tenant"
+    default  = "sre-test"
+  }
+
+  argument "cluster" {
+    optional = true
+    comment  = "Meraki or EKS cluster"
+    default  = ""
+  }
+
+  // -- ENDPOINTS
+  otelcol.receiver.otlp "default" {
+    // configures the default endpoint "0.0.0.0:4317"
+    grpc {
+      endpoint = argument.otlp_grpc_endpoint.value
+      include_metadata = true
+    }
+
+    // configures the default endpoint "0.0.0.0:4318"
+    http {
+      endpoint = argument.otlp_http_endpoint.value
+      include_metadata = true
+    }
+
+    output {
+      // metrics = [otelcol.processor.memory_limiter.default.input]
+      // traces  = [otelcol.processor.memory_limiter.default.input]
+      metrics = [otelcol.processor.batch.default.input]
+      traces  = [otelcol.processor.batch.default.input]
+    }
+  }
+  /*
+  // -- PROCESSORS
+  otelcol.processor.memory_limiter "default" {
+    check_interval = "15s"
+
+    limit = "1024MiB" // alternatively, set `limit_percentage` and `spike_limit_percentage`
+
+    output {
+      metrics = [otelcol.processor.batch.default.input]
+      traces  = [otelcol.processor.batch.default.input]
+    }
+  }
+  */
+
+  // otelcol.processor.batch must run after components which can drop telemetry (e.g. otelcol.processor.memory_limiter).
+  // Otherwise, if telemetry is dropped, the effect of batching will be lost.
+  otelcol.processor.batch "default" {
+    output {
+      metrics = [otelcol.exporter.prometheus.default.input]
+      traces  = [otelcol.exporter.otlp.default.input]
+    }
+  }
+
+  // -- EXPORTERS
+  otelcol.exporter.prometheus "default" {
+    forward_to = [prometheus.remote_write.default.receiver]
+  }
+
+  prometheus.remote_write "default" {
+    endpoint {
+      url     = argument.prometheus_endpoint.value
+      headers = { "X-Scope-OrgID" = argument.metrics_tenant.value }
+      write_relabel_config {
+        source_labels = ["cluster"]
+        separator     = ""
+        regex         = ""
+        target_label  = "cluster"
+        replacement   = argument.cluster.value
+      }
+    }
+  }
+
+  otelcol.exporter.otlp "default" {
+    client {
+      endpoint = argument.tempo_endpoint.value
+
+      tls {
+        insecure             = true
+        insecure_skip_verify = true
+      }
+    }
+  }
+}
+
+declare "edge" {
+  // -- ARGUMENTS
+  argument "otlp_http_endpoint" {
+    optional = true
+    default  = "127.0.0.1:4318"
+  }
+
+  argument "otlp_grpc_endpoint" {
+    optional = true
+    default  = "127.0.0.1:4317"
+  }
+
+  argument "otel_endpoint" {
+    optional = true
+    default  = "grafana-alloy.obs-grafana-agent:4317"
+  }
+
+  // -- ENDPOINTS
+  otelcol.receiver.otlp "default" {
+    grpc {
+      endpoint = argument.otlp_grpc_endpoint.value
+      include_metadata = true
+    }
+
+    http {
+      endpoint = argument.otlp_http_endpoint.value
+      include_metadata = true
+    }
+
+    output {
+      metrics = [otelcol.processor.memory_limiter.default.input]
+      traces  = [otelcol.processor.memory_limiter.default.input]
+    }
+  }
+
+  // -- PROCESSORS
+  otelcol.processor.memory_limiter "default" {
+    check_interval = "10s"
+
+    limit = "2048MiB" // alternatively, set `limit_percentage` and `spike_limit_percentage`
+
+    output {
+      metrics = [otelcol.processor.batch.default.input]
+      traces  = [otelcol.processor.batch.default.input]
+    }
+  }
+
+  // otelcol.processor.batch must run after components which can drop telemetry (e.g. otelcol.processor.memory_limiter).
+  otelcol.processor.batch "default" {
+    output {
+      metrics = [otelcol.processor.transform.default.input]
+      traces  = [otelcol.processor.transform.default.input]
+    }
+  }
+
+  // Applied required transformations before sending to central OTEL endpoint
+
+  otelcol.processor.transform "default" {
+    error_mode = "ignore"
+
+    trace_statements {
+      context = "resource"
+      statements = [
+        `keep_keys(attributes, ["service.name", "service.namespace", "cloud.region", "process.command_line"])`,
+        `replace_pattern(attributes["process.command_line"], "password\\=[^\\s]*(\\s?)", "password=***")`,
+        `limit(attributes, 100, [])`,
+        `truncate_all(attributes, 4096)`,
+      ]
+    }
+
+    trace_statements {
+      context = "span"
+      statements = [
+        `set(status.code, 1) where attributes["http.path"] == "/health"`,
+        `set(name, attributes["http.route"])`,
+        `replace_match(attributes["http.target"], "/user/*/list/*", "/user/{userId}/list/{listId}")`,
+        `limit(attributes, 100, [])`,
+        `truncate_all(attributes, 4096)`,
+      ]
+    }
+
+    metric_statements {
+      context = "resource"
+      statements = [
+        `keep_keys(attributes, ["host.name"])`,
+        `truncate_all(attributes, 4096)`,
+      ]
+    }
+
+    metric_statements {
+      context = "metric"
+      statements = [
+        `set(description, "Sum") where type == "Sum"`,
+      ]
+    }
+
+    metric_statements {
+      context = "datapoint"
+      statements = [
+        `limit(attributes, 100, ["host.name"])`,
+        `truncate_all(attributes, 4096)`,
+        `convert_sum_to_gauge() where metric.name == "system.processes.count"`,
+        `convert_gauge_to_sum("cumulative", false) where metric.name == "prometheus_metric"`,
+      ]
+    }
+
+    output {
+      metrics = [otelcol.exporter.otlp.default.input]
+      traces  = [otelcol.exporter.otlp.default.input]
+    }
+  }
+
+  // -- EXPORTERS
+  otelcol.exporter.otlp "default" {
+    client {
+      endpoint = argument.otel_endpoint.value
+
+      tls {
+        insecure             = true
+        insecure_skip_verify = true
+      }
+    }
+  }
+}
