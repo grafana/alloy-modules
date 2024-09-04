@@ -128,6 +128,16 @@ declare "kubernetes" {
     default = false
   }
 
+  argument "scrape_interval" {
+    comment = "How often to scrape metrics from the targets (default: 60s)"
+    optional = true
+  }
+
+  argument "scrape_timeout" {
+    comment = "How long before a scrape times out (default: 10s)"
+    optional = true
+  }
+
   /*
     Hidden Arguments
     These arguments are used to set reusable variables to avoid repeating logic
@@ -503,16 +513,6 @@ declare "metrics" {
     optional = true
   }
 
-  argument "scrape_interval" {
-    comment = "How often to scrape metrics from the targets (default: 60s)"
-    optional = true
-  }
-
-  argument "scrape_timeout" {
-    comment = "How long before a scrape times out (default: 10s)"
-    optional = true
-  }
-
   argument "max_cache_size" {
     comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
     optional = true
@@ -541,8 +541,6 @@ declare "metrics" {
     forward_to = [prometheus.relabel.annotations.receiver]
     targets = discovery.relabel.http_annotations.output
     scheme = "http"
-    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
-    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
 
     clustering {
       enabled = coalesce(argument.clustering.value, false)
@@ -566,8 +564,6 @@ declare "metrics" {
     forward_to = [prometheus.relabel.annotations.receiver]
     targets = discovery.relabel.https_annotations.output
     scheme = "https"
-    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
-    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
     bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
     tls_config {
