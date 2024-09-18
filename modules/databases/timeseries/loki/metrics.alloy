@@ -59,7 +59,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true@false"
+      regex = coalesce(argument.port_name.value, "http-metrics") + "@Running@true@false"
       action = "keep"
     }
 
