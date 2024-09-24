@@ -1,16 +1,17 @@
-# Agent Module
+# Alloy Module
 
-Handles scraping Grafana Agent metrics.
+Handles scraping Grafana Alloy metrics and relabeling logs to match Alloy Integration standards.
 
 ## Components
 
 -   [`kubernetes`](#kubernetes)
 -   [`local`](#local)
 -   [`scrape`](#scrape)
+-   [`relabel_logs`](#relabel_logs)
 
 ### `kubernetes`
 
-Handles discovery of kubernetes targets and exports them, this component does not perform any scraping at all and is not required to be used for kubernetes, as a custom service discovery and targets can be defined and passed to `agent.scrape`
+Handles discovery of kubernetes targets and exports them, this component does not perform any scraping at all and is not required to be used for kubernetes, as a custom service discovery and targets can be defined and passed to `alloy.scrape`
 
 #### Arguments
 
@@ -18,7 +19,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | :---------------- | :------- | :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
 | `namespaces`      | _no_     | `[]`                                       | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                               |
 | `field_selectors` | _no_     | `[]`                                       | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets |
-| `label_selectors` | _no_     | `["app.kubernetes.io/name=grafana-agent"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
+| `label_selectors` | _no_     | `["app.kubernetes.io/name=grafana-alloy"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
 | `port_name`       | _no_     | `http-metrics`                             | The of the port to scrape metrics from                                                                                                    |
 
 #### Exports
@@ -74,14 +75,14 @@ The following labels are automatically added to exported targets.
 | Name              | Required | Default                       | Description                                                                                                                                         |
 | :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                           |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                                      |
-| `job_label`       | _no_     | `integrations/agent`          | The job label to add for all metrics                                                                                                                |
+| `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a component input where scraped metrics should be forwarded to                                                                              |
+| `job_label`       | _no_     | `integrations/alloy`          | The job label to add for all metrics                                                                                                                |
 | `keep_metrics`    | _no_     | [see code](module.river#L228) | A regular expression of metrics to keep                                                                                                             |
 | `drop_metrics`    | _no_     | [see code](module.river#L235) | A regular expression of metrics to drop                                                                                                             |
 | `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
 | `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                  |
 | `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://grafana.com/docs/alloy/latest/flow/concepts/clustering/) should be enabled                                      |
 
 #### Labels
 
@@ -93,26 +94,36 @@ The following labels are automatically added to exported targets.
 
 ---
 
+### `relabel_logs`
+
+#### Arguments
+
+| Name              | Required | Default                       | Description                                                                                                                                         |
+| :---------------- | :------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a component input where scraped logs should be forwarded to                                                                                 |
+| `job_label`       | _no_     | `integrations/alloy`          | The job label to add for all logs                                                                                                                   |
+| `instance_label`  | _no_     | `constants.hostname`          | The instance label to add for all logs                                                                                                           
+
 ## Usage
 
 ### `kubernetes`
 
-The following example will scrape all agents in cluster.
+The following example will scrape all alloy instances in a cluster.
 
 ```alloy
-import.git "agent" {
+import.git "alloy" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "module/collectors/agent/metrics.alloy"
+  path = "module/collectors/alloy/metrics.alloy"
   pull_frequency = "15m"
 }
 
 // get the targets
-agent.kubernetes "targets" {}
+alloy.kubernetes "targets" {}
 
 // scrape the targets
-agent.scrape "metrics" {
-  targets = agent.kubernetes.targets.output
+alloy.scrape "metrics" {
+  targets = alloy.kubernetes.targets.output
   forward_to = [
     prometheus.remote_write.default.receiver,
   ]
@@ -133,22 +144,22 @@ prometheus.remote_write "local" {
 
 ### `local`
 
-The following example will scrape the agent for metrics on the local machine.
+The following example will scrape the alloy for metrics on the local machine.
 
 ```alloy
-import.git "agent" {
+import.git "alloy" {
   repository = "https://github.com/grafana/flow-modules.git"
   revision = "main"
-  path = "module/collectors/agent/metrics.alloy"
+  path = "module/collectors/alloy/metrics.alloy"
   pull_frequency = "15m"
 }
 
 // get the targets
-agent.local "targets" {}
+alloy.local "targets" {}
 
 // scrape the targets
-agent.scrape "metrics" {
-  targets = agent.local.targets.output
+alloy.scrape "metrics" {
+  targets = alloy.local.targets.output
   forward_to = [
     prometheus.remote_write.default.receiver,
   ]

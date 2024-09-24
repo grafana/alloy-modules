@@ -1,0 +1,62 @@
+/*
+Module: job-alloy
+Description: Relabels grafana alloy logs, setting log_level, instance and job labels.
+
+Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
+      arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
+      This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
+      does not override the value passed in, where coalesce() will return the first non-null value.
+
+Note: In order to use this module, you need to collect your logs with a "loki.source.*" component, or the "logging" block and send
+      it to the "receiver" export to be processed.
+*/
+
+declare "relabel_logs" {  
+  
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "job_label" {
+    comment = "The job label to add for all grafana alloy logs (default: integrations/alloy)"
+    optional = true
+  }
+
+  argument "instance_label" {
+    comment = "The instance label to add for all grafana alloy logs (default: constants.hostname)"
+    optional = true
+  }
+
+  loki.process "alloy_logs" {
+    forward_to = [loki.relabel.alloy_logs.receiver]
+
+    stage.regex {
+      expression = "(level=(?P<log_level>[\\s]*debug|warn|info|error))"
+    }
+    
+    stage.labels {
+      values = {
+        level = "log_level",
+      }
+    }
+  }
+
+  loki.relabel "alloy_logs" {
+
+    forward_to = argument.forward_to.value
+
+    rule {
+      replacement = coalesce(argument.instance_label.value, constants.hostname)
+      target_label  = "instance"
+    }
+
+    rule {
+      target_label = "job"
+      replacement  = coalesce(argument.job_label.value, "integrations/alloy")
+    }
+  }
+  
+  export "receiver" {
+    value = loki.process.alloy_logs.receiver
+  }
+}

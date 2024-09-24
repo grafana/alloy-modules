@@ -1,12 +1,13 @@
 /*
-Module: job-agent
-Description: Scrapes grafana agent
+Module: job-alloy
+Description: Scrapes grafana alloy metrics
 
 Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
       This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
       does not override the value passed in, where coalesce() will return the first non-null value.
 */
+
 declare "kubernetes" {
   // arguments for kubernetes discovery
   argument "namespaces" {
@@ -22,7 +23,7 @@ declare "kubernetes" {
 
   argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=grafana-agent\"])"
+    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=grafana-alloy\"])"
     optional = true
   }
 
@@ -31,14 +32,14 @@ declare "kubernetes" {
     optional = true
   }
 
-  // grafana agent service discovery for all of the pods
-  discovery.kubernetes "agent" {
+  // grafana alloy service discovery for all of the pods
+  discovery.kubernetes "alloy" {
     role = "pod"
 
     selectors {
       role = "pod"
       field = join(coalesce(argument.field_selectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=grafana-agent"]), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=grafana-alloy"]), ",")
     }
 
     namespaces {
@@ -46,9 +47,9 @@ declare "kubernetes" {
     }
   }
 
-  // grafana agent relabelings (pre-scrape)
+  // grafana alloy relabelings (pre-scrape)
   discovery.relabel "kubernetes" {
-    targets = discovery.kubernetes.agent.targets
+    targets = discovery.kubernetes.alloy.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
@@ -148,7 +149,7 @@ declare "local" {
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost:" + format("%s", coalesce(argument.port.value, "12345")),
+        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "12345")),
         "source" = "local",
       },
     ]
@@ -169,7 +170,7 @@ declare "scrape" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all grafana-agent metric (default: integrations/agent)"
+    comment = "The job label to add for all grafana alloy metrics (default: integrations/alloy)"
     optional = true
   }
 
@@ -199,15 +200,15 @@ declare "scrape" {
   }
 
   argument "clustering" {
-    // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
+    // Docs: https://grafana.com/docs/alloy/latest/get-started/clustering/
     comment = "Whether or not clustering should be enabled (default: false)"
     optional = true
   }
 
-  // grafana agent scrape job
-  prometheus.scrape "agent" {
-    job_name = coalesce(argument.job_label.value, "integrations/agent")
-    forward_to = [prometheus.relabel.agent.receiver]
+  // grafana alloy scrape job
+  prometheus.scrape "alloy" {
+    job_name = coalesce(argument.job_label.value, "integrations/alloy")
+    forward_to = [prometheus.relabel.alloy.receiver]
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
@@ -217,8 +218,8 @@ declare "scrape" {
     }
   }
 
-  // grafana-agent metric relabelings (post-scrape)
-  prometheus.relabel "agent" {
+  // grafana alloy metric relabelings (post-scrape)
+  prometheus.relabel "alloy" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
@@ -232,7 +233,7 @@ declare "scrape" {
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(up|log_.+|(agent_(build_info|tcp_connections|wal_(samples_appended_total|storage_active_series))|go_(gc_duration_seconds_count|goroutines|memstats_heap_inuse_bytes)|process_(cpu_seconds_total|start_time_seconds)|prometheus_(remote_storage_(enqueue_retries_total|highest_timestamp_in_seconds|queue_highest_sent_timestamp_seconds|samples_(dropped_total|failed_total|pending|retried_total|total)|sent_batch_duration_seconds_(bucket|count|sum)|shard_(capacity|s(_desired|_max|_min))|succeeded_samples_total)|sd_discovered_targets|target_(interval_length_seconds_(count|sum)|scrapes_(exceeded_sample_limit_total|sample_(duplicate_timestamp_total|out_of_bounds_total|out_of_order_total)))|target_sync_length_seconds_sum|wal_watcher_current_segment)|traces_(exporter_send_failed_spans|exporter_sent_spans|loadbalancer_(backend_outcome|num_backends)|receiver_(accepted_spans|refused_spans))))")
+      regex = coalesce(argument.keep_metrics.value, "alloy_build_info|alloy_component_controller_evaluating|alloy_component_controller_running_components|alloy_component_dependencies_wait_seconds|alloy_component_dependencies_wait_seconds_bucket|alloy_component_evaluation_seconds|alloy_component_evaluation_seconds_bucket|alloy_component_evaluation_seconds_count|alloy_component_evaluation_seconds_sum|alloy_component_evaluation_slow_seconds|alloy_config_hash|alloy_resources_machine_rx_bytes_total|alloy_resources_machine_tx_bytes_total|alloy_resources_process_cpu_seconds_total|alloy_resources_process_resident_memory_bytes|cluster_node_gossip_health_score|cluster_node_gossip_proto_version|cluster_node_gossip_received_events_total|cluster_node_info|cluster_node_lamport_time|cluster_node_peers|cluster_node_update_observers|cluster_transport_rx_bytes_total|cluster_transport_rx_packet_queue_length|cluster_transport_rx_packets_failed_total|cluster_transport_rx_packets_total|cluster_transport_stream_rx_bytes_total|cluster_transport_stream_rx_packets_failed_total|cluster_transport_stream_rx_packets_total|cluster_transport_stream_tx_bytes_total|cluster_transport_stream_tx_packets_failed_total|cluster_transport_stream_tx_packets_total|cluster_transport_streams|cluster_transport_tx_bytes_total|cluster_transport_tx_packet_queue_length|cluster_transport_tx_packets_failed_total|cluster_transport_tx_packets_total|exporter_send_failed_spans_ratio_total|exporter_sent_spans_ratio_total|go_gc_duration_seconds_count|go_goroutines|go_memstats_heap_inuse_bytes|processor_batch_batch_send_size_ratio_bucket|processor_batch_metadata_cardinality_ratio|processor_batch_timeout_trigger_send_ratio_total|prometheus_remote_storage_bytes_total|prometheus_remote_storage_highest_timestamp_in_seconds|prometheus_remote_storage_metadata_bytes_total|prometheus_remote_storage_queue_highest_sent_timestamp_seconds|prometheus_remote_storage_samples_failed_total|prometheus_remote_storage_samples_retried_total|prometheus_remote_storage_samples_total|prometheus_remote_storage_sent_batch_duration_seconds_bucket|prometheus_remote_storage_sent_batch_duration_seconds_count|prometheus_remote_storage_sent_batch_duration_seconds_sum|prometheus_remote_storage_shards|prometheus_remote_storage_shards_max|prometheus_remote_storage_shards_min|prometheus_remote_write_wal_samples_appended_total|prometheus_remote_write_wal_storage_active_series|receiver_accepted_spans_ratio_total|receiver_refused_spans_ratio_total|rpc_server_duration_milliseconds_bucket|scrape_duration_seconds|up")
       action = "keep"
     }
 
