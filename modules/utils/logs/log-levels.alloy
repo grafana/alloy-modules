@@ -26,7 +26,7 @@ declare "default_level" {
       }
     }
 
-    // default level to unknown
+    // default type to unknown
     stage.static_labels {
       values = {
         log_type = "unknown",
@@ -105,6 +105,59 @@ declare "default_level" {
       }
 
       // set the extracted level to be a label
+      stage.labels {
+        values = {
+          level = "",
+        }
+      }
+    }
+
+    // check to see if the log line matches the json format
+    stage.match {
+      // unescaped regex: ^\s*\{.+\}\s*$
+      selector = "{level=\"" + argument.default_level.value + "\"} |~ \"^\\\\s*\\\\{.+\\\\}\\\\s*$\""
+
+      // set the log_type
+      stage.static_labels{
+        values = {
+          log_type = "json",
+        }
+      }
+
+      // extract the level
+      stage.json {
+        expressions = {
+          level = "level || lvl || loglevel || LogLevel || log_level || logLevel || log_lvl || logLvl || levelname || levelName || LevelName",
+        }
+      }
+
+      // set the extracted level as a label
+      stage.labels {
+        values = {
+          level = "",
+        }
+      }
+    }
+
+    // check to see if the log line matches the logfmt format
+    stage.match {
+      // unescaped regex: ^(\w+=("[^"]*"|\S+))(\s+(\w+=("[^"]*"|\S+)))*\s*
+      selector = "{level=\"" + argument.default_level.value + "\"} |~ \"^(\\\\w+=(\\\"[^\\\"]*\\\"|\\\\S+))(\\\\s+(\\\\w+=(\\\"[^\\\"]*\\\"|\\\\S+)))*\\\\s*\""
+
+      // set the log_type
+      stage.static_labels{
+        values = {
+          log_type = "logfmt",
+        }
+      }
+
+      // while the level could be extracted as logfmt, this allows for multiple possible log levels formats
+      // i.e. loglevel=info, level=info, lvl=info, loglvl=info
+      stage.regex {
+        expression = "(log)?(level|lvl)=\"?(?P<level>\\S+)\"?"
+      }
+
+      // set the extracted level value as a label
       stage.labels {
         values = {
           level = "",
