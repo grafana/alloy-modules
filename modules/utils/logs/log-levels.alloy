@@ -17,9 +17,9 @@ declare "default_level" {
     forward_to = argument.forward_to.value
 
     /*******************************************************************************
-    *                         Log-Level Parsing
+    *                       Set baseline level and log_type
     ********************************************************************************/
-    // default level to unknown
+    // default level to value or default_level (default: unknown)
     stage.static_labels {
       values = {
         level = argument.default_level.value,
@@ -32,6 +32,26 @@ declare "default_level" {
         log_type = "unknown",
       }
     }
+  }
+}
+
+declare "klog_format" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "default_level" {
+    comment = "The default log level to use if one is not set (default: unknown)"
+    optional = true
+    default = "unknown"
+  }
+
+  export "receiver" {
+    value = loki.process.format_klog.receiver
+  }
+
+  loki.process "format_klog" {
+    forward_to = argument.forward_to.value
 
     // check to see if the log line matches the klog format (https://github.com/kubernetes/klog)
     stage.match {
@@ -85,6 +105,26 @@ declare "default_level" {
         }
       }
     }
+  }
+}
+
+declare "zerolog_format" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "default_level" {
+    comment = "The default log level to use if one is not set (default: unknown)"
+    optional = true
+    default = "unknown"
+  }
+
+  export "receiver" {
+    value = loki.process.format_zerolog.receiver
+  }
+
+  loki.process "format_zerolog" {
+    forward_to = argument.forward_to.value
 
     // check to see if the log line matches the zerolog format
     stage.match {
@@ -111,6 +151,26 @@ declare "default_level" {
         }
       }
     }
+  }
+}
+
+declare "json_format" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "default_level" {
+    comment = "The default log level to use if one is not set (default: unknown)"
+    optional = true
+    default = "unknown"
+  }
+
+  export "receiver" {
+    value = loki.process.format_json.receiver
+  }
+
+  loki.process "format_json" {
+    forward_to = argument.forward_to.value
 
     // check to see if the log line matches the json format
     stage.match {
@@ -138,6 +198,26 @@ declare "default_level" {
         }
       }
     }
+  }
+}
+
+declare "logfmt_format" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "default_level" {
+    comment = "The default log level to use if one is not set (default: unknown)"
+    optional = true
+    default = "unknown"
+  }
+
+  export "receiver" {
+    value = loki.process.format_logfmt.receiver
+  }
+
+  loki.process "format_logfmt" {
+    forward_to = argument.forward_to.value
 
     // check to see if the log line matches the logfmt format
     stage.match {
@@ -164,6 +244,26 @@ declare "default_level" {
         }
       }
     }
+  }
+}
+
+declare "unknown_format" {
+  argument "forward_to" {
+    comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "default_level" {
+    comment = "The default log level to use if one is not set (default: unknown)"
+    optional = true
+    default = "unknown"
+  }
+
+  export "receiver" {
+    value = loki.process.format_unknown.receiver
+  }
+
+  loki.process "format_unknown" {
+    forward_to = argument.forward_to.value
 
     // if the level is still unknown, do one last attempt at detecting it based on common levels
     stage.match {
