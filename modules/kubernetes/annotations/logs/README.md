@@ -427,10 +427,37 @@ log_annotations.decolorize "default" {
   annotation = "logs.grafana.com"
 }
 
+// set default level and log_type to unknown
 log_utils.default_level "default" {
+  forward_to = [log_utils.klog_format.default.receiver]
+}
+
+// identify klog format and parse log level
+log_utils.klog_format "default" {
+  forward_to = [log_utils.zerolog_format.default.receiver]
+}
+
+// identify zerolog format and parse log level
+log_utils.zerolog_format "default" {
+  forward_to = [log_utils.json_format.default.receiver]
+}
+
+// identify json format and parse log level
+log_utils.json_format "default" {
+  forward_to = [log_utils.logfmt_format.default.receiver]
+}
+
+// identify logfmt format and parse log level
+log_utils.logfmt_format "default" {
+  forward_to = [log_utils.unknown_format.default.receiver]
+}
+
+// attempt parse log level from unidentified log type
+log_utils.unknown_format "default" {
   forward_to = [log_utils.normalize_level.default.receiver]
 }
 
+// Set level consistently (case and name)
 log_utils.normalize_level "default" {
   forward_to = [
     log_utils.pre_process_metrics.default.receiver,
