@@ -475,18 +475,18 @@ log_utils.post_process_metrics "default" {}
 
 loki.write "local" {
   endpoint {
-    url = env("LOGS_PRIMARY_URL")
+    url = sys.env("LOGS_PRIMARY_URL")
 
     basic_auth {
-      username = env("LOGS_PRIMARY_TENANT")
-      password = env("LOGS_PRIMARY_TOKEN")
+      username = sys.env("LOGS_PRIMARY_TENANT")
+      password = sys.env("LOGS_PRIMARY_TOKEN")
     }
   }
 
   external_labels = {
-    "cluster" = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), ""),
-    "env" = coalesce(env("ENV"), ""),
-    "region" = coalesce(env("REGION"), ""),
+    "cluster" = coalesce(sys.env("CLUSTER_NAME"), sys.env("CLUSTER"), ""),
+    "env" = coalesce(sys.env("ENV"), ""),
+    "region" = coalesce(sys.env("REGION"), ""),
   }
 }
 ```
