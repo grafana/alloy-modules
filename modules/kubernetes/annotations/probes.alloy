@@ -108,7 +108,7 @@ declare "kubernetes" {
   argument "__sd_annotation" {
     optional = true
     comment = "The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
-    default = replace(replace(replace(coalesce(argument.annotation.value, "probes.grafana.com"),".", "_"),"/", "_"),"-", "_")
+    default = string.replace(string.replace(string.replace(coalesce(argument.annotation.value, "probes.grafana.com"),".", "_"),"/", "_"),"-", "_")
   }
 
   // annotations service discovery
@@ -117,8 +117,8 @@ declare "kubernetes" {
 
     selectors {
       role = coalesce(argument.role.value, "service")
-      field = join(coalesce(argument.field_selectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, []), ",")
+      field = string.join(coalesce(argument.field_selectors.value, []), ",")
+      label = string.join(coalesce(argument.label_selectors.value, []), ",")
     }
 
     namespaces {
