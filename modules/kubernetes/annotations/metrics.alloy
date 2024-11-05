@@ -297,7 +297,7 @@ declare "kubernetes" {
         "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
       ]
       separator = ";"
-      regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
+      regex = "^([^:]+)(?::\\d+)?(?:;+(\\d+);*(?:;\\d+)*)$"
       replacement = "$1:$2"
       target_label = "__address__"
     }
