@@ -188,11 +188,6 @@ declare "kubernetes" {
     // the label prometheus.io/service-monitor: "false" is a common label for headless services, when performing endpoint
     // service discovery, if there is both a load-balanced service and headless service, this can result in duplicate
     // scrapes if the name of the service is attached as a label.  any targets with this label or annotation set should be dropped
-    rule {
-      action = "replace"
-      replacement = "false"
-      target_label = "__tmp_scrape"
-    }
 
     rule {
       action = "replace"
@@ -202,9 +197,9 @@ declare "kubernetes" {
         "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
       ]
       separator = ";"
-      // only allow empty or true, otherwise defaults to false
-      regex = "^(?:;*)?(true)(;|true)*$"
-      replacement = "$1"
+      // set to false if any of the endpoint or service annotations are scrape: false
+      regex = "^.*(?i)(false).*$"
+      replacement = "false"
       target_label = "__tmp_scrape"
     }
 
