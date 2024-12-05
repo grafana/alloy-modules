@@ -138,6 +138,12 @@ declare "kubernetes" {
     optional = true
   }
 
+  argument "job_format" {
+    comment = "Format of the job label. Default is namespace/pod_controller_name as $1/$2"
+    optional = true
+    default = "$1/$2"
+  }
+
   /*
     Hidden Arguments
     These arguments are used to set reusable variables to avoid repeating logic
@@ -188,11 +194,6 @@ declare "kubernetes" {
     // the label prometheus.io/service-monitor: "false" is a common label for headless services, when performing endpoint
     // service discovery, if there is both a load-balanced service and headless service, this can result in duplicate
     // scrapes if the name of the service is attached as a label.  any targets with this label or annotation set should be dropped
-    rule {
-      action = "replace"
-      replacement = "false"
-      target_label = "__tmp_scrape"
-    }
 
     rule {
       action = "replace"
@@ -202,9 +203,9 @@ declare "kubernetes" {
         "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
       ]
       separator = ";"
-      // only allow empty or true, otherwise defaults to false
-      regex = "^(?:;*)?(true)(;|true)*$"
-      replacement = "$1"
+      // set to false if any of the endpoint or service annotations are scrape: false
+      regex = "^.*(?i)(false).*$"
+      replacement = "false"
       target_label = "__tmp_scrape"
     }
 
@@ -297,7 +298,7 @@ declare "kubernetes" {
         "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
       ]
       separator = ";"
-      regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
+      regex = "^([^:]+)(?::\\d+)?(?:;+(\\d+);*(?:;\\d+)*)$"
       replacement = "$1:$2"
       target_label = "__address__"
     }
@@ -394,7 +395,7 @@ declare "kubernetes" {
       ]
       separator = ";"
       regex = "^([^;]+)(?:;*)?([^;]+).*$"
-      replacement = "$1/$2"
+      replacement = argument.job_format.value
       target_label = "job"
     }
 
@@ -408,7 +409,7 @@ declare "kubernetes" {
       ]
       separator = ";"
       regex = "^(?:ReplicaSet);([^;]+);([^;]+)-.+$"
-      replacement = "$1/$2"
+      replacement = argument.job_format.value
       target_label = "job"
     }
 
