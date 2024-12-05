@@ -37,8 +37,8 @@ declare "kubernetes" {
 
     selectors {
       role = "pod"
-      field = join(coalesce(argument.field_selectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=tempo"]), ",")
+      field = string.join(coalesce(argument.field_selectors.value, []), ",")
+      label = string.join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=tempo"]), ",")
     }
 
     namespaces {
@@ -154,7 +154,7 @@ declare "local" {
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "3200")),
+        "__address__" = "localhost" + string.format("%s", coalesce(argument.port.value, "3200")),
         "source" = "local",
       },
     ]

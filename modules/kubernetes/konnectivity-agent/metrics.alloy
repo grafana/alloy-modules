@@ -38,8 +38,8 @@ declare "kubernetes" {
 
     selectors {
       role = "pod"
-      field = join(coalesce(argument.field_selectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["k8s-app=konnectivity-agent"]), ",")
+      field = string.join(coalesce(argument.field_selectors.value, []), ",")
+      label = string.join(coalesce(argument.label_selectors.value, ["k8s-app=konnectivity-agent"]), ",")
     }
 
     namespaces {
