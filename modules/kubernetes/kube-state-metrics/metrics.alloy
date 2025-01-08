@@ -106,11 +106,6 @@ declare "scrape" {
     optional = true
   }
 
-  argument "scheme" {
-    comment = "The URL scheme with which to fetch metrics from targets.	 (default: http)"
-    optional = true
-  }
-
   argument "max_cache_size" {
     comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
     optional = true
@@ -129,7 +124,6 @@ declare "scrape" {
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
-    scheme = coalesce(argument.scheme.value, "http")
 
     clustering {
       enabled = coalesce(argument.clustering.value, false)
