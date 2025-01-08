@@ -33,12 +33,12 @@ declare "kubernetes" {
     optional = true
   }
 
-  // kube state metrics service discovery for all of the pods
+  // kube state metrics service discovery for all of the endpoints
   discovery.kubernetes "ksm" {
-    role = "service"
+    role = "endpoints"
 
     selectors {
-      role = "service"
+      role = "endpoints"
       field = string.join(coalesce(argument.field_selectors.value, []), ",")
       label = string.join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=kube-state-metrics"]), ",")
     }
@@ -54,7 +54,7 @@ declare "kubernetes" {
 
     // only keep targets with a matching port name
     rule {
-      source_labels = ["__meta_kubernetes_service_port_name"]
+      source_labels = ["__meta_kubernetes_endpoint_port_name"]
       regex = coalesce(argument.port_name.value, "http")
       action = "keep"
     }
@@ -106,6 +106,11 @@ declare "scrape" {
     optional = true
   }
 
+  argument "scheme" {
+    comment = "The URL scheme with which to fetch metrics from targets.	 (default: http)"
+    optional = true
+  }
+
   argument "max_cache_size" {
     comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
     optional = true
@@ -124,6 +129,7 @@ declare "scrape" {
     targets = argument.targets.value
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
+    scheme = coalesce(argument.scheme.value, "http")
 
     clustering {
       enabled = coalesce(argument.clustering.value, false)
