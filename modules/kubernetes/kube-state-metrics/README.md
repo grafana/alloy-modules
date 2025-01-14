@@ -9,14 +9,12 @@ Handles scraping Grafana kube-state-metrics metrics.
 
 ### `kubernetes`
 
-Handles discovery of kubernetes targets and exports them, this component does not perform any scraping at all and is not
-required to be used for kubernetes, as a custom service discovery and targets can be defined and passed to
-`kube-state-metrics.scrape`
+Handles discovery of kubernetes targets and exports them, this component does not perform any scraping at all and is not required to be used for kubernetes, as a custom service discovery and targets can be defined and passed to `kube-state-metrics.scrape`
 
 #### Arguments
 
 | Name              | Required | Default                                         | Description                                                                                                                               |
-|:------------------|:---------|:------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------|
+| :---------------- | :------- | :---------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
 | `namespaces`      | _no_     | `[]`                                            | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                               |
 | `field_selectors` | _no_     | `[]`                                            | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets |
 | `label_selectors` | _no_     | `["app.kubernetes.io/name=kube-state-metrics"]` | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets          |
@@ -25,16 +23,16 @@ required to be used for kubernetes, as a custom service discovery and targets ca
 #### Exports
 
 | Name     | Type                | Description                |
-|:---------|:--------------------|:---------------------------|
+| :------- | :------------------ | :------------------------- |
 | `output` | `list(map(string))` | List of discovered targets |
 
 #### Labels
 
 The following labels are automatically added to exported targets.
 
-| Label    | Description                                                                                       |
-|:---------|:--------------------------------------------------------------------------------------------------|
-| `source` | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC |
+| Label     | Description                                                                                       |
+| :-------- | :------------------------------------------------------------------------------------------------ |
+| `source`  | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC |
 
 ---
 
@@ -43,7 +41,7 @@ The following labels are automatically added to exported targets.
 #### Arguments
 
 | Name                | Required | Default                                      | Description                                                                                                                                         |
-|:--------------------|:---------|:---------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------|
+| :------------------ | :------- | :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `targets`           | _yes_    | `list(map(string))`                          | List of targets to scrape                                                                                                                           |
 | `forward_to`        | _yes_    | `list(MetricsReceiver)`                      | Must be a where scraped should be forwarded to                                                                                                      |
 | `job_label`         | _no_     | `integrations/kubernetes/kube-state-metrics` | The job label to add for all metrics                                                                                                                |
@@ -61,7 +59,7 @@ The following labels are automatically added to exported targets.
 The following labels are automatically added to exported targets.
 
 | Label | Description                                    |
-|:------|:-----------------------------------------------|
+| :---- | :--------------------------------------------- |
 | `job` | Set to the value of `argument.job_label.value` |
 
 ---
