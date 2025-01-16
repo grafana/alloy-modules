@@ -8,6 +8,10 @@ Note: Every argument except for "forward_to" is optional, and does have a define
       does not override the value passed in, where coalesce() will return the first non-null value.
 */
 declare "cadvisor" {
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
   argument "forward_to" {
     comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
   }
@@ -73,7 +77,7 @@ declare "cadvisor" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes cadvisor metrics endpoint
@@ -227,6 +231,10 @@ declare "cadvisor" {
 }
 
 declare "resources" {
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
   argument "forward_to" {
     comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
   }
@@ -292,7 +300,7 @@ declare "resources" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes resources metrics endpoint
@@ -374,6 +382,10 @@ declare "resources" {
 }
 
 declare "kubelet" {
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
   argument "forward_to" {
     comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
   }
@@ -439,7 +451,7 @@ declare "kubelet" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes kubelet metrics endpoint
@@ -697,6 +709,10 @@ declare "apiserver" {
 }
 
 declare "probes" {
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
   argument "field_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
     comment = "The label selectors to use to find matching targets (default: [\"metadata.name=kubernetes\"])"
@@ -762,7 +778,7 @@ declare "probes" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes probes metrics endpoint
