@@ -17,18 +17,19 @@ Handles scraping and collecting kubelet [cAdvisor](https://github.com/google/cad
 
 #### Arguments
 
-| Name              | Required | Default                            | Description                                                                                                                                         |
-| :---------------- | :------- | :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`            | Must be a where scraped should be forwarded to                                                                                                      |
-| `field_selectors` | _no_     | `["metadata.name=kubernetes"]`     | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets           |
-| `label_selectors` | _no_     | `[]`                               | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                    |
-| `job_label`       | _no_     | `integrations/kubernetes/cadvisor` | The job label to add for all metrics                                                                                                                |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L156)      | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L149)      | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                              | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                              | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                           | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                            | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name                     | Required | Default                                    | Description                                                                                                                                        |
+| :----------------------- | :------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`             | _yes_    | `list(MetricsReceiver)`                    | Must be a where scraped should be forwarded to                                                                                                     |
+| `field_selectors`        | _no_     | `["metadata.name=kubernetes"]`             | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
+| `label_selectors`        | _no_     | `[]`                                       | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
+| `job_label`              | _no_     | `integrations/kubernetes/cadvisor`         | The job label to add for all metrics                                                                                                               |
+| `keep_metrics`           | _no_     | [see code](module.alloy#L153)              | A regular expression of metrics to keep                                                                                                            |
+| `drop_metrics`           | _no_     | [see code](module.alloy#L146)              | A regular expression of metrics to drop                                                                                                            |
+| `scrape_interval`        | _no_     | `60s`                                      | How often to scrape metrics from the targets                                                                                                       |
+| `scrape_timeout`         | _no_     | `10s`                                      | How long before a scrape times out                                                                                                                 |
+| `max_cache_size`         | _no_     | `100000`                                   | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`             | _no_     | `false`                                    | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
+| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 
 #### Exports
 
@@ -53,18 +54,18 @@ Handles scraping and collecting kubelet [resource](https://kubernetes.io/docs/ta
 
 #### Arguments
 
-| Name              | Required | Default                             | Description                                                                                                                                         |
-| :---------------- | :------- | :---------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`             | Must be a where scraped should be forwarded to                                                                                                      |
-| `field_selectors` | _no_     | `["metadata.name=kubernetes"]`      | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets           |
-| `label_selectors` | _no_     | `[]`                                | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                    |
-| `job_label`       | _no_     | `integrations/kubernetes/resources` | The job label to add for all metrics                                                                                                                |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L373)       | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L380)       | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                               | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                               | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                            | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                             | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name              | Required | Default                             | Description                                                                                                                                        |
+| :---------------- | :------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(MetricsReceiver)`             | Must be a where scraped should be forwarded to                                                                                                     |
+| `field_selectors` | _no_     | `["metadata.name=kubernetes"]`      | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
+| `label_selectors` | _no_     | `[]`                                | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
+| `job_label`       | _no_     | `integrations/kubernetes/resources` | The job label to add for all metrics                                                                                                               |
+| `keep_metrics`    | _no_     | [see code](module.alloy#L369)       | A regular expression of metrics to keep                                                                                                            |
+| `drop_metrics`    | _no_     | [see code](module.alloy#L376)       | A regular expression of metrics to drop                                                                                                            |
+| `scrape_interval` | _no_     | `60s`                               | How often to scrape metrics from the targets                                                                                                       |
+| `scrape_timeout`  | _no_     | `10s`                               | How long before a scrape times out                                                                                                                 |
+| `max_cache_size`  | _no_     | `100000`                            | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`      | _no_     | `false`                             | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
 
 #### Exports
 
@@ -89,18 +90,19 @@ Handles scraping and collecting [kubelet](https://kubernetes.io/docs/reference/i
 
 #### Arguments
 
-| Name              | Required | Default                           | Description                                                                                                                                         |
-| :---------------- | :------- | :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`           | Must be a where scraped should be forwarded to                                                                                                      |
-| `field_selectors` | _no_     | `[]`                              | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets           |
-| `label_selectors` | _no_     | `[]`                              | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                    |
-| `job_label`       | _no_     | `integrations/kubernetes/kubelet` | The job label to add for all metrics                                                                                                                |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L532)     | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L525)     | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                             | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                             | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                          | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                           | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name                     | Required | Default                                    | Description                                                                                                                                        |
+| :----------------------- | :------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`             | _yes_    | `list(MetricsReceiver)`                    | Must be a where scraped should be forwarded to                                                                                                     |
+| `field_selectors`        | _no_     | `[]`                                       | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
+| `label_selectors`        | _no_     | `[]`                                       | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
+| `job_label`              | _no_     | `integrations/kubernetes/kubelet`          | The job label to add for all metrics                                                                                                               |
+| `keep_metrics`           | _no_     | [see code](module.alloy#L527)              | A regular expression of metrics to keep                                                                                                            |
+| `drop_metrics`           | _no_     | [see code](module.alloy#L521)              | A regular expression of metrics to drop                                                                                                            |
+| `scrape_interval`        | _no_     | `60s`                                      | How often to scrape metrics from the targets                                                                                                       |
+| `scrape_timeout`         | _no_     | `10s`                                      | How long before a scrape times out                                                                                                                 |
+| `max_cache_size`         | _no_     | `100000`                                   | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`             | _no_     | `false`                                    | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
+| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 
 #### Exports
 
@@ -125,21 +127,21 @@ Handles scraping and collecting [kube-apiserver](https://kubernetes.io/docs/conc
 
 #### Arguments
 
-| Name              | Required | Default                             | Description                                                                                                                                         |
-| :---------------- | :------- | :---------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`             | Must be a where scraped should be forwarded to                                                                                                      |
-| `namespaces`      | _no_     | `[]`                                | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                         |
-| `port_name`       | _no_     | `https`                             | The of the port to scrape metrics from                                                                                                              |
-| `field_selectors` | _no_     | `["metadata.name=kubernetes"]`      | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets           |
-| `label_selectors` | _no_     | `[]`                                | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                    |
-| `job_label`       | _no_     | `integrations/kubernetes/apiserver` | The job label to add for all metrics                                                                                                                |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L715)       | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L698)       | A regular expression of metrics to drop                                                                                                             |
-| `drop_les`        | _no_     | [see code](module.alloy#L708)       | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                               | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                               | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                            | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                             | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name              | Required | Default                             | Description                                                                                                                                        |
+| :---------------- | :------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(MetricsReceiver)`             | Must be a where scraped should be forwarded to                                                                                                     |
+| `namespaces`      | _no_     | `[]`                                | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                        |
+| `port_name`       | _no_     | `https`                             | The of the port to scrape metrics from                                                                                                             |
+| `field_selectors` | _no_     | `["metadata.name=kubernetes"]`      | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
+| `label_selectors` | _no_     | `[]`                                | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
+| `job_label`       | _no_     | `integrations/kubernetes/apiserver` | The job label to add for all metrics                                                                                                               |
+| `keep_metrics`    | _no_     | [see code](module.alloy#L703)       | A regular expression of metrics to keep                                                                                                            |
+| `drop_metrics`    | _no_     | [see code](module.alloy#L686)       | A regular expression of metrics to drop                                                                                                            |
+| `drop_les`        | _no_     | [see code](module.alloy#L693)       | A regular expression of metrics to drop                                                                                                            |
+| `scrape_interval` | _no_     | `60s`                               | How often to scrape metrics from the targets                                                                                                       |
+| `scrape_timeout`  | _no_     | `10s`                               | How long before a scrape times out                                                                                                                 |
+| `max_cache_size`  | _no_     | `100000`                            | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`      | _no_     | `false`                             | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
 
 #### Exports
 
@@ -165,20 +167,21 @@ Handles scraping and collecting Kubernetes Probe metrics from each worker in the
 
 #### Arguments
 
-| Name              | Required | Default                          | Description                                                                                                                                         |
-| :---------------- | :------- | :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`          | Must be a where scraped should be forwarded to                                                                                                      |
-| `namespaces`      | _no_     | `[]`                             | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                         |
-| `port_name`       | _no_     | `https`                          | The of the port to scrape metrics from                                                                                                              |
-| `field_selectors` | _no_     | `["metadata.name=kubernetes"]`   | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets           |
-| `label_selectors` | _no_     | `[]`                             | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                    |
-| `job_label`       | _no_     | `integrations/kubernetes/probes` | The job label to add for all metrics                                                                                                                |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L867)    | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L860)    | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                            | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                            | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                         | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                          | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name                     | Required | Default                                    | Description                                                                                                                                        |
+| :----------------------- | :------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`             | _yes_    | `list(MetricsReceiver)`                    | Must be a where scraped should be forwarded to                                                                                                     |
+| `namespaces`             | _no_     | `[]`                                       | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                        |
+| `port_name`              | _no_     | `https`                                    | The of the port to scrape metrics from                                                                                                             |
+| `field_selectors`        | _no_     | `["metadata.name=kubernetes"]`             | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
+| `label_selectors`        | _no_     | `[]`                                       | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
+| `job_label`              | _no_     | `integrations/kubernetes/probes`           | The job label to add for all metrics                                                                                                               |
+| `keep_metrics`           | _no_     | [see code](module.alloy#L854)              | A regular expression of metrics to keep                                                                                                            |
+| `drop_metrics`           | _no_     | [see code](module.alloy#L847)              | A regular expression of metrics to drop                                                                                                            |
+| `scrape_interval`        | _no_     | `60s`                                      | How often to scrape metrics from the targets                                                                                                       |
+| `scrape_timeout`         | _no_     | `10s`                                      | How long before a scrape times out                                                                                                                 |
+| `max_cache_size`         | _no_     | `100000`                                   | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`             | _no_     | `false`                                    | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
+| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 
 #### Exports
 
@@ -203,21 +206,21 @@ Handles scraping and collecting [CoreDNS/KubeDNS](https://coredns.io/plugins/met
 
 #### Arguments
 
-| Name              | Required | Default                            | Description                                                                                                                                         |
-| :---------------- | :------- | :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `forward_to`      | _yes_    | `list(MetricsReceiver)`            | Must be a where scraped should be forwarded to                                                                                                      |
-| `namespaces`      | _no_     | `[]`                               | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                         |
-| `port_name`       | _no_     | `https`                            | The of the port to scrape metrics from                                                                                                              |
-| `namespaces`      | _no_     | `["kube-system"]`                  | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                         |
-| `field_selectors` | _no_     | `[]`                               | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets           |
-| `label_selectors` | _no_     | `["k8s-app=kube-dns"]`             | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                    |
-| `job_label`       | _no_     | `integrations/kubernetes/kube-dns` | The job label to add for all metrics                                                                                                                |
-| `keep_metrics`    | _no_     | [see code](module.alloy#L867)      | A regular expression of metrics to keep                                                                                                             |
-| `drop_metrics`    | _no_     | [see code](module.alloy#L860)      | A regular expression of metrics to drop                                                                                                             |
-| `scrape_interval` | _no_     | `60s`                              | How often to scrape metrics from the targets                                                                                                        |
-| `scrape_timeout`  | _no_     | `10s`                              | How long before a scrape times out                                                                                                                  |
-| `max_cache_size`  | _no_     | `100000`                           | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                            | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| Name              | Required | Default                            | Description                                                                                                                                        |
+| :---------------- | :------- | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `forward_to`      | _yes_    | `list(MetricsReceiver)`            | Must be a where scraped should be forwarded to                                                                                                     |
+| `namespaces`      | _no_     | `[]`                               | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                        |
+| `port_name`       | _no_     | `https`                            | The of the port to scrape metrics from                                                                                                             |
+| `namespaces`      | _no_     | `["kube-system"]`                  | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                        |
+| `field_selectors` | _no_     | `[]`                               | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
+| `label_selectors` | _no_     | `["k8s-app=kube-dns"]`             | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
+| `job_label`       | _no_     | `integrations/kubernetes/kube-dns` | The job label to add for all metrics                                                                                                               |
+| `keep_metrics`    | _no_     | [see code](module.alloy#L1045)     | A regular expression of metrics to keep                                                                                                            |
+| `drop_metrics`    | _no_     | [see code](module.alloy#L1038)     | A regular expression of metrics to drop                                                                                                            |
+| `scrape_interval` | _no_     | `60s`                              | How often to scrape metrics from the targets                                                                                                       |
+| `scrape_timeout`  | _no_     | `10s`                              | How long before a scrape times out                                                                                                                 |
+| `max_cache_size`  | _no_     | `100000`                           | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`      | _no_     | `false`                            | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
 
 #### Exports
 
