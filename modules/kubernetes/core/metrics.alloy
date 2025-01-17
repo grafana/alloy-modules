@@ -8,10 +8,6 @@ Note: Every argument except for "forward_to" is optional, and does have a define
       does not override the value passed in, where coalesce() will return the first non-null value.
 */
 declare "cadvisor" {
-  argument "kubernetes_api_address" {
-    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
-    optional = true
-  }
   argument "forward_to" {
     comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
   }
@@ -52,6 +48,10 @@ declare "cadvisor" {
   argument "clustering" {
     // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
     comment = "Whether or not clustering should be enabled (default: false)"
+    optional = true
+  }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
     optional = true
   }
 
@@ -231,10 +231,6 @@ declare "cadvisor" {
 }
 
 declare "resources" {
-  argument "kubernetes_api_address" {
-    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
-    optional = true
-  }
   argument "forward_to" {
     comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
   }
@@ -275,6 +271,10 @@ declare "resources" {
   argument "clustering" {
     // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
     comment = "Whether or not clustering should be enabled (default: false)"
+    optional = true
+  }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
     optional = true
   }
 
@@ -382,10 +382,6 @@ declare "resources" {
 }
 
 declare "kubelet" {
-  argument "kubernetes_api_address" {
-    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
-    optional = true
-  }
   argument "forward_to" {
     comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
   }
@@ -426,6 +422,10 @@ declare "kubelet" {
   argument "clustering" {
     // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
     comment = "Whether or not clustering should be enabled (default: false)"
+    optional = true
+  }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
     optional = true
   }
 
@@ -709,10 +709,6 @@ declare "apiserver" {
 }
 
 declare "probes" {
-  argument "kubernetes_api_address" {
-    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
-    optional = true
-  }
   argument "field_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
     comment = "The label selectors to use to find matching targets (default: [\"metadata.name=kubernetes\"])"
@@ -753,6 +749,10 @@ declare "probes" {
   argument "clustering" {
     // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
     comment = "Whether or not clustering should be enabled (default: false)"
+    optional = true
+  }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
     optional = true
   }
 

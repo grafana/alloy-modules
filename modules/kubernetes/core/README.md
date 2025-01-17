@@ -19,7 +19,6 @@ Handles scraping and collecting kubelet [cAdvisor](https://github.com/google/cad
 
 | Name                     | Required | Default                                    | Description                                                                                                                                        |
 | :----------------------- | :------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 | `forward_to`             | _yes_    | `list(MetricsReceiver)`                    | Must be a where scraped should be forwarded to                                                                                                     |
 | `field_selectors`        | _no_     | `["metadata.name=kubernetes"]`             | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
 | `label_selectors`        | _no_     | `[]`                                       | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
@@ -30,6 +29,7 @@ Handles scraping and collecting kubelet [cAdvisor](https://github.com/google/cad
 | `scrape_timeout`         | _no_     | `10s`                                      | How long before a scrape times out                                                                                                                 |
 | `max_cache_size`         | _no_     | `100000`                                   | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering`             | _no_     | `false`                                    | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
+| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 
 #### Exports
 
@@ -92,7 +92,6 @@ Handles scraping and collecting [kubelet](https://kubernetes.io/docs/reference/i
 
 | Name                     | Required | Default                                    | Description                                                                                                                                        |
 | :----------------------- | :------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 | `forward_to`             | _yes_    | `list(MetricsReceiver)`                    | Must be a where scraped should be forwarded to                                                                                                     |
 | `field_selectors`        | _no_     | `[]`                                       | The [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) to use to find matching targets          |
 | `label_selectors`        | _no_     | `[]`                                       | The [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to use to find matching targets                   |
@@ -103,6 +102,7 @@ Handles scraping and collecting [kubelet](https://kubernetes.io/docs/reference/i
 | `scrape_timeout`         | _no_     | `10s`                                      | How long before a scrape times out                                                                                                                 |
 | `max_cache_size`         | _no_     | `100000`                                   | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering`             | _no_     | `false`                                    | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
+| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 
 #### Exports
 
@@ -169,7 +169,6 @@ Handles scraping and collecting Kubernetes Probe metrics from each worker in the
 
 | Name                     | Required | Default                                    | Description                                                                                                                                        |
 | :----------------------- | :------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 | `forward_to`             | _yes_    | `list(MetricsReceiver)`                    | Must be a where scraped should be forwarded to                                                                                                     |
 | `namespaces`             | _no_     | `[]`                                       | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                        |
 | `port_name`              | _no_     | `https`                                    | The of the port to scrape metrics from                                                                                                             |
@@ -182,6 +181,7 @@ Handles scraping and collecting Kubernetes Probe metrics from each worker in the
 | `scrape_timeout`         | _no_     | `10s`                                      | How long before a scrape times out                                                                                                                 |
 | `max_cache_size`         | _no_     | `100000`                                   | The maximum number of elements to hold in the relabeling cache. This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering`             | _no_     | `false`                                    | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                     |
+| `kubernetes_api_address` | _no_     | `kubernetes.default.svc.cluster.local:443` | Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster                                                   |
 
 #### Exports
 
