@@ -24,8 +24,8 @@ declare "from_worker" {
         "__meta_kubernetes_pod_uid",
         "__meta_kubernetes_pod_container_name",
       ]
-      regex = "^(?:([a-f0-9]{32});.*|;([a-f0-9\\-]+));(.+)$"
-      replacement = "/var/log/pods/*$1$2/$3/*.log"
+      regex = "^(?:;*)?([^;]+);(?:[^;]+;)?(.+)"
+      replacement = "/var/log/pods/*$1/$2/*.log"
       target_label = "__path__"
     }
 
