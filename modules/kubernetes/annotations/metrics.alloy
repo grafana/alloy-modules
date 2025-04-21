@@ -402,7 +402,7 @@ declare "kubernetes" {
     rule {
       action = "replace"
       source_labels = [
-        "__meta_kubernetes_pod_controller_type",
+        "__meta_kubernetes_pod_controller_kind",
         "__meta_kubernetes_namespace",
         "__meta_kubernetes_pod_controller_name",
       ]
