@@ -18,12 +18,14 @@ declare "from_worker" {
     // DO NOT delete this line as it is needed to tail the pod logs on the node
     rule {
       action = "replace"
-      separator = "/"
+      separator = ";"
       source_labels = [
+        "__meta_kubernetes_pod_annotation_kubernetes_io_config_mirror",
         "__meta_kubernetes_pod_uid",
         "__meta_kubernetes_pod_container_name",
       ]
-      replacement = "/var/log/pods/*$1/*.log"
+      regex = "^(?:;*)?([^;]+);(?:[^;]+;)?(.+)"
+      replacement = "/var/log/pods/*$1/$2/*.log"
       target_label = "__path__"
     }
 
