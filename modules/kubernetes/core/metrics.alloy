@@ -50,6 +50,10 @@ declare "cadvisor" {
     comment = "Whether or not clustering should be enabled (default: false)"
     optional = true
   }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
 
   export "output" {
     value = discovery.relabel.cadvisor.output
@@ -73,7 +77,7 @@ declare "cadvisor" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes cadvisor metrics endpoint
@@ -269,6 +273,10 @@ declare "resources" {
     comment = "Whether or not clustering should be enabled (default: false)"
     optional = true
   }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
 
   export "output" {
     value = discovery.relabel.resources.output
@@ -292,7 +300,7 @@ declare "resources" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes resources metrics endpoint
@@ -416,6 +424,10 @@ declare "kubelet" {
     comment = "Whether or not clustering should be enabled (default: false)"
     optional = true
   }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
 
   export "output" {
     value = discovery.relabel.kubelet.output
@@ -439,7 +451,7 @@ declare "kubelet" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes kubelet metrics endpoint
@@ -739,6 +751,10 @@ declare "probes" {
     comment = "Whether or not clustering should be enabled (default: false)"
     optional = true
   }
+  argument "kubernetes_api_address" {
+    comment = "Fully Qualified Domain Name (FQDN) and port for the Kubernetes API service in Kubernetes cluster (default: kubernetes.default.svc.cluster.local:443)"
+    optional = true
+  }
 
   export "output" {
     value = discovery.relabel.probes.output
@@ -762,7 +778,7 @@ declare "probes" {
     // set the address to use the kubernetes service dns name
     rule {
       target_label = "__address__"
-      replacement  = "kubernetes.default.svc.cluster.local:443"
+      replacement  = coalesce(argument.kubernetes_api_address.value, "kubernetes.default.svc.cluster.local:443")
     }
 
     // set the metrics path to use the proxy path to the nodes probes metrics endpoint
