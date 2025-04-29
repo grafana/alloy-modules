@@ -39,6 +39,12 @@ declare "pods" {
     default = ".*"
   }
 
+  argument "job_format" {
+    comment = "Format of the job label. Default is namespace/pod name as $1/$2"
+    optional = true
+    default = "$1/$2"
+  }
+
   /*
     Hidden Arguments
     These arguments are used to set reusable variables to avoid repeating logic
@@ -190,11 +196,11 @@ declare "pods" {
     rule {
       action = "replace"
       source_labels = [
-        "workload",
         "__meta_kubernetes_namespace",
+        "workload",
       ]
-      regex = ".+\\/(.+);(.+)"
-      replacement = "$2/$1"
+      regex = "(.+);.+\\/(.+)"
+      replacement = argument.job_format.value
       target_label = "job"
     }
   }

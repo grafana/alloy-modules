@@ -138,6 +138,12 @@ declare "kubernetes" {
     optional = true
   }
 
+  argument "job_format" {
+    comment = "Format of the job label. Default is namespace/pod_controller_name as $1/$2"
+    optional = true
+    default = "$1/$2"
+  }
+
   /*
     Hidden Arguments
     These arguments are used to set reusable variables to avoid repeating logic
@@ -394,7 +400,7 @@ declare "kubernetes" {
       ]
       separator = ";"
       regex = "^([^;]+)(?:;*)?([^;]+).*$"
-      replacement = "$1/$2"
+      replacement = argument.job_format.value
       target_label = "job"
     }
 
@@ -408,7 +414,7 @@ declare "kubernetes" {
       ]
       separator = ";"
       regex = "^(?:ReplicaSet);([^;]+);([^;]+)-.+$"
-      replacement = "$1/$2"
+      replacement = argument.job_format.value
       target_label = "job"
     }
 
