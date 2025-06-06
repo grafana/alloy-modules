@@ -132,10 +132,10 @@ declare "pods" {
       separator = "/"
       target_label  = "workload"
     }
-    // remove the hash from the ReplicaSet
+    // remove the hash from the ReplicaSet or Job
     rule {
       source_labels = ["workload"]
-      regex = "(ReplicaSet/.+)-.+"
+      regex = "(ReplicaSet|Job/.+)-.+"
       target_label  = "workload"
     }
 

@@ -398,16 +398,16 @@ declare "kubernetes" {
       target_label = "job"
     }
 
-    // if the controller is a ReplicaSet, drop the hash from the end of the ReplicaSet
+    // if the controller is a ReplicaSet or Job, drop the hash from the end
     rule {
       action = "replace"
       source_labels = [
-        "__meta_kubernetes_pod_controller_type",
+        "__meta_kubernetes_pod_controller_kind",
         "__meta_kubernetes_namespace",
         "__meta_kubernetes_pod_controller_name",
       ]
       separator = ";"
-      regex = "^(?:ReplicaSet);([^;]+);([^;]+)-.+$"
+      regex = "^(?:ReplicaSet|Job);([^;]+);([^;]+)-.+$"
       replacement = "$1/$2"
       target_label = "job"
     }
@@ -474,10 +474,10 @@ declare "kubernetes" {
       replacement = "$1/$2"
       target_label  = "workload"
     }
-    // remove the hash from the ReplicaSet
+    // remove the hash from the ReplicaSet or Job
     rule {
       source_labels = ["workload"]
-      regex = "(ReplicaSet/.+)-.+"
+      regex = "(ReplicaSet|Job/.+)-.+"
       target_label  = "workload"
     }
 
