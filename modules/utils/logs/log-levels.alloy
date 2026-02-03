@@ -169,7 +169,7 @@ declare "normalize_level" {
     // normalize info level handles INF, INFO, INFORMATION, or INFORMATIONAL
     stage.replace {
       source = "level"
-      expression = "(?i)(info?(mation(al)?)?)"
+      expression = "(?i)(info?(rmation(al)?)?)"
       replace = "info"
     }
 
