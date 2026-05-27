@@ -430,7 +430,7 @@ ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-alex@^11.0.1:
+alex@11.0.1:
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/alex/-/alex-11.0.1.tgz#ac314ea97ca446b4edabf642762c3ff58febc58e"
   integrity sha512-rKLBZxD/lvuykdC6XB8ma9YjDl46j9ayHROZUtC1yJ2jlGpoP7RZR1tBBSjtlr260ixIW6iCkqAnHzmti5Q6CQ==
@@ -894,7 +894,7 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
-editorconfig-checker@^5.1.4:
+editorconfig-checker@5.1.5:
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/editorconfig-checker/-/editorconfig-checker-5.1.5.tgz#1d2ae86c0899e05a3296b89db91f14adb7b41d65"
   integrity sha512-l2QifQhu33enwAauVdwT0oBPz8xdCHOZ7jImuUNV/3AR3Dg26jPAVPdHeKzuf1qpMZTfnuOONqLlpSIEFP33Ig==
@@ -1854,7 +1854,7 @@ markdownlint-cli2-formatter-default@0.0.4:
   resolved "https://registry.yarnpkg.com/markdownlint-cli2-formatter-default/-/markdownlint-cli2-formatter-default-0.0.4.tgz#81e26b0a50409c0357c6f0d38d8246946b236fab"
   integrity sha512-xm2rM0E+sWgjpPn1EesPXx5hIyrN2ddUnUwnbCsD/ONxYtw3PX6LydvdH6dciWAoFDpwzbHM1TO7uHfcMd6IYg==
 
-markdownlint-cli2@^0.13.0:
+markdownlint-cli2@0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/markdownlint-cli2/-/markdownlint-cli2-0.13.0.tgz#691cab01994295b4b8c87aa0485c0b1e0f792289"
   integrity sha512-Pg4nF7HlopU97ZXtrcVISWp3bdsuc5M0zXyLp2/sJv2zEMlInrau0ZKK482fQURzVezJzWBpNmu4u6vGAhij+g==
@@ -2687,14 +2687,7 @@ minimatch@^5.0.1:
   dependencies:
     brace-expansion "^2.0.1"
 
-minimatch@^9.0.0:
-  version "9.0.4"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.4.tgz#8e49c731d1749cbec05050ee5145147b32496a51"
-  integrity sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==
-  dependencies:
-    brace-expansion "^2.0.1"
-
-minimatch@^9.0.4:
+minimatch@^9.0.0, minimatch@^9.0.4:
   version "9.0.5"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.5.tgz#d74f9dd6b57d83d8e98cfb82133b03978bc929e5"
   integrity sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==
@@ -2715,12 +2708,7 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-"minipass@^5.0.0 || ^6.0.2 || ^7.0.0":
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.0.4.tgz#dbce03740f50a4786ba994c1fb908844d27b038c"
-  integrity sha512-jYofLM5Dam9279rdkWzqHozUo4ybjdZmCsDHePy5V/PbBcVMiSZR97gmAy45aqi8CK1lG2ECd356FU86avfwUQ==
-
-minipass@^7.1.2:
+"minipass@^5.0.0 || ^6.0.2 || ^7.0.0", minipass@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
   integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
@@ -3796,7 +3784,7 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-textlint-rule-common-misspellings@^1.0.1:
+textlint-rule-common-misspellings@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/textlint-rule-common-misspellings/-/textlint-rule-common-misspellings-1.0.1.tgz#8c4133cf3bb59aa159199d2c9bced12413365774"
   integrity sha512-f5KWhQFJzJBUX3RirAS25aSkAaaOHeSHtBeb7d49O+vxnAX3dZBS5DB/e5M1kR4tifW4qae64oqWZygoGYWkjQ==
@@ -3820,14 +3808,14 @@ textlint-rule-helper@^2.0.0, textlint-rule-helper@^2.1.1:
     structured-source "^4.0.0"
     unist-util-visit "^2.0.3"
 
-textlint-rule-no-todo@^2.0.1:
+textlint-rule-no-todo@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/textlint-rule-no-todo/-/textlint-rule-no-todo-2.0.1.tgz#86351ed3521ce8faa3b8224f88887f3cecbf2920"
   integrity sha512-+adoWaBgoTN2g0WNcrERhVq7gdPKQIf1z7Ol+6XwMGv8XmuoFp5vJljHKtCmJBmGhBihjty2b8oaza2MY6UNlw==
   dependencies:
     textlint-rule-helper "^2.0.0"
 
-textlint-rule-terminology@^4.0.1:
+textlint-rule-terminology@4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/textlint-rule-terminology/-/textlint-rule-terminology-4.0.1.tgz#d342021a8a8dfd57c00ecdd869ce44dd2fa098b8"
   integrity sha512-wKiVhc2B9HP2MFU4x7ZDx+oM5u43ETpKWTLHKvdhPRZ0+davi4M8mFmkZVovDIMO7igsGjixikcvFmnCMg3kmQ==
@@ -3836,7 +3824,7 @@ textlint-rule-terminology@^4.0.1:
     strip-json-comments "^3.0.1"
     textlint-rule-helper "^2.1.1"
 
-textlint@^14.2.0:
+textlint@14.2.0:
   version "14.2.0"
   resolved "https://registry.yarnpkg.com/textlint/-/textlint-14.2.0.tgz#b68ec6d12cf7c75ba4968b011fb11db7a4cc1dbd"
   integrity sha512-f3vT1mwpHuP2IWNG7AiE7n4nRKiOI/4Rxz7wQSv6KWaCgigcwi9x4JCMWKn1gpEvC/bssKW1/G0XxzHvKybCKg==
