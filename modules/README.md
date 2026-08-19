@@ -35,5 +35,6 @@
     -   [gitlab](modules/source-control/gitlab/)
 -   [system](modules/system/)
     -   [node-exporter](modules/system/node-exporter/)
+    -   [solaredge](modules/system/solaredge/)
 -   [ui](modules/ui/)
     -   [grafana](modules/ui/grafana/)

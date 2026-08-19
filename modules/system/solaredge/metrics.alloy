@@ -1,0 +1,123 @@
+/*
+Module: solaredge
+Description: Scrapes SolarEdge inverter metrics from a Prometheus exporter
+             (https://github.com/dave92082/SolarEdge-Exporter) over Modbus TCP / SunSpec.
+             v1 keep-list is inverter metrics only; meters (M_*) and batteries are next steps.
+             Upstream requirements: https://github.com/dave92082/SolarEdge-Exporter/#requirements
+
+Note: Optional arguments use coalesce(argument.value, "...") instead of default = "..." so that null
+      values passed from a consuming module still resolve to the documented default.
+*/
+
+declare "local" {
+	argument "exporter_address" {
+		comment  = "Host:port of the SolarEdge Prometheus exporter (default: 127.0.0.1:2112)"
+		optional = true
+	}
+
+	discovery.relabel "local" {
+		targets = [
+			{
+				__address__ = coalesce(argument.exporter_address.value, "127.0.0.1:2112"),
+				source      = "local",
+			},
+		]
+	}
+
+	export "output" {
+		value = discovery.relabel.local.output
+	}
+}
+
+declare "scrape" {
+	argument "targets" {
+		comment = "Must be a list() of targets"
+	}
+
+	argument "forward_to" {
+		comment = "Must be a list(MetricsReceiver) where collected metrics should be forwarded to"
+	}
+
+	argument "job_label" {
+		comment  = "The job label to add for all SolarEdge metrics (default: integrations/solaredge)"
+		optional = true
+	}
+
+	argument "keep_metrics" {
+		comment  = "A regular expression of metrics to keep (default: inverter SunSpec metrics + up; meters excluded)"
+		optional = true
+	}
+
+	argument "drop_metrics" {
+		comment  = "A regular expression of metrics to drop (default: go_* runtime metrics from the exporter)"
+		optional = true
+	}
+
+	argument "scheme" {
+		comment  = "The scheme to use when scraping metrics (default: http)"
+		optional = true
+	}
+
+	argument "bearer_token_file" {
+		comment  = "The bearer token file (default: none)"
+		optional = true
+	}
+
+	argument "scrape_interval" {
+		comment  = "How often to scrape metrics from the targets (default: 15s)"
+		optional = true
+	}
+
+	argument "scrape_timeout" {
+		comment  = "How long before a scrape times out (default: 10s)"
+		optional = true
+	}
+
+	argument "max_cache_size" {
+		comment  = "The maximum number of elements to hold in the relabeling cache (default: 100000)"
+		optional = true
+	}
+
+	argument "clustering" {
+		comment  = "Whether or not clustering should be enabled (default: false)"
+		optional = true
+	}
+
+	prometheus.scrape "solaredge" {
+		job_name        = coalesce(argument.job_label.value, "integrations/solaredge")
+		forward_to      = [prometheus.relabel.solaredge.receiver]
+		targets         = argument.targets.value
+		scrape_interval = coalesce(argument.scrape_interval.value, "15s")
+		scrape_timeout  = coalesce(argument.scrape_timeout.value, "10s")
+
+		scheme            = coalesce(argument.scheme.value, "http")
+		bearer_token_file = coalesce(argument.bearer_token_file.value, "")
+
+		tls_config {
+			insecure_skip_verify = true
+		}
+
+		clustering {
+			enabled = coalesce(argument.clustering.value, false)
+		}
+	}
+
+	prometheus.relabel "solaredge" {
+		forward_to     = argument.forward_to.value
+		max_cache_size = coalesce(argument.max_cache_size.value, 100000)
+
+		rule {
+			source_labels = ["__name__"]
+			regex         = coalesce(argument.drop_metrics.value, "(^(go)_.+$)")
+			action        = "drop"
+		}
+
+		// Inverter SunSpec metrics from dave92082/SolarEdge-Exporter. Meter series (M_*, M2_*, M3_*)
+		// are excluded in v1 and are the documented next step.
+		rule {
+			source_labels = ["__name__"]
+			regex         = coalesce(argument.keep_metrics.value, "(up|SunSpec_.+|AC_.+|DC_.+|Temp_.+|Status.*)")
+			action        = "keep"
+		}
+	}
+}

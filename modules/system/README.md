@@ -1,3 +1,4 @@
 # System Modules
 
 -   [node-exporter](./node-exporter/)
+-   [solaredge](./solaredge/)
